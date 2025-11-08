@@ -42,6 +42,12 @@ nav a {
     color: rgb(51, 51, 51);
 }
 
+.logo {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
 .inicio-titulo h2 {
     font-size: 36px;
     margin-bottom: 10px;
