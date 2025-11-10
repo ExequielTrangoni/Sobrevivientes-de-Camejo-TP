@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
       id: 1,
       tipoUsuario: "@refugioAmigosPeludos",
       nombre: "🐶 Juan busca hogar",
-      imagen: "img/perro-1.jpg",
+      imagen: "../images/perro-1.jpg",
       descripcion: "Perro cariñoso, juguetón y obediente. Ideal para familias con niños.",
       requisitos: "Tener espacio al aire libre y disponibilidad para paseos diarios.",
       estado: "no-adoptado"
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       id: 2,
       tipoUsuario: "@usuarioMarta",
       nombre: "🐱 Luna busca hogar",
-      imagen: "img/gato-1.jpg",
+      imagen: "../images/gato-1.jpg",
       descripcion: "Gatita muy dulce, ya esterilizada y con vacunas al día.",
       requisitos: "Tener espacio en el domicilio y disponibilidad para llevarla al veterinario.",
       estado: "no-adoptado"
