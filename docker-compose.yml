@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:15
+    container_name: petconnect_db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_USER: exequiel
+      POSTGRES_DB: petconnect
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+volumes:
+  dbdata:
