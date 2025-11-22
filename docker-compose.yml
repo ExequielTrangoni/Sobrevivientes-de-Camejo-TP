@@ -4,8 +4,8 @@ services:
     container_name: petconnect_db
     restart: always
     environment:
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_USER: exequiel
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
       POSTGRES_DB: petconnect
     ports:
       - "5432:5432"
