@@ -11,9 +11,11 @@ app.use(express.json());
 
 const rutasMascotas = require('./routes/mascotas');
 const rutasAdopciones = require('./routes/adopciones');
+const rutasUsuarios = require('./routes/usuarios');
 
 app.use('/api/mascotas', rutasMascotas);
 app.use('/api/adopciones', rutasAdopciones);
+app.use('/api/usuarios', rutasUsuarios);
 
 app.get("/", (req, res) => {
   res.send("Backend anda");
