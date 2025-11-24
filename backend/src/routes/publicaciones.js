@@ -46,12 +46,23 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const consulta = 'DELETE FROM publicaciones WHERE id = $1';
-    await pool.query(consulta, [id]);
+    const query = 'DELETE FROM publicaciones WHERE id = $1';
+    await pool.query(query, [id]);
     res.json({ mensaje: 'Publicacion eliminada correctamente' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+router.put('/like/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const query = 'UPDATE publicaciones SET likes = likes + 1 WHERE id = $1 RETURNING *';
+    const resultado = await pool.query(query, [id]);
+    
+    res.json(resultado.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 module.exports = router;

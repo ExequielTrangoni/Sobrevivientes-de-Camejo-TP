@@ -56,8 +56,8 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   
   try {
-    const consulta = 'DELETE FROM adopciones WHERE id = $1';
-    await pool.query(consulta, [id]);
+    const query = 'DELETE FROM adopciones WHERE id = $1';
+    await pool.query(query, [id]);
     
     res.json({ mensaje: 'Adopción eliminada correctamente' });
   } catch (error) {
