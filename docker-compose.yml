@@ -13,7 +13,7 @@ services:
       - dbdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-backend:
+  backend:
     build: ./backend
     container_name: petconnect_backend
     restart: always
@@ -30,11 +30,12 @@ backend:
     volumes:
       - ./backend/src:/app/src
 
-frontend:
-  build: ./frontend
-  container_name: petconnect_frontend
-  restart: always
-  ports:
-    - "8080:80"
+  frontend:
+    build: ./frontend
+    container_name: petconnect_frontend
+    restart: always
+    ports:
+      - "8080:80"
+
 volumes:
-  dbdata:
+    dbdata:
