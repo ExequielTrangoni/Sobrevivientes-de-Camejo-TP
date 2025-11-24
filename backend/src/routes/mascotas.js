@@ -12,14 +12,14 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { nombre, especie, raza, edad, tamano, usuario_id } = req.body;
+  const { nombre, especie, raza, edad, tamanio, duenio_id } = req.body;
   
   const query = `
-    INSERT INTO mascotas (nombre, especie, raza, edad, tamano, usuario_id)
+    INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, duenio_id)
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
   `;
-  const valores = [nombre, especie, raza, edad, tamano, usuario_id];
+  const valores = [nombre, especie, raza, edad, tamanio, duenio_id];
 
   try {
     const resultado = await pool.query(query, valores);
