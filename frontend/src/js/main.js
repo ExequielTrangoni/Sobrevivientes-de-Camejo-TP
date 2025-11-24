@@ -6,7 +6,7 @@ const commentsContainer = document.getElementById("conteiner-comentarios");
 
 let todasLasPublicaciones = [];
 let indiceActual = 0;
-const CANTIDAD_POR_TANDA = 5;
+const CANTIDAD_POR_TANDA = 6;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         galeria.innerHTML = "<p style='text-align:center; padding:20px;'>Error al cargar publicaciones.</p>";
     }
 });
-
 
 function cargarMasPublicaciones() {
 
@@ -90,6 +89,7 @@ window.addEventListener("click", (e) => {
 
 async function darLike(idPublicacion, elemento) {
     try {
+        elemento.style.color = '#ff0015ff';
         await fetch(`http://localhost:3000/api/publicaciones/like/${idPublicacion}`, {
             method: 'PUT'
         });
@@ -99,6 +99,7 @@ async function darLike(idPublicacion, elemento) {
         spanContador.innerText = cantidad + 1;
         
     } catch (error) {
+        elemento.style.color = '';
         console.error("Error al dar like:", error);
     }
 }
