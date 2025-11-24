@@ -6,22 +6,22 @@ const commentsContainer = document.getElementById("conteiner-comentarios");
 
 let todasLasPublicaciones = [];
 let indiceActual = 0;
-const CANTIDAD_POR_TANDA = 6;
+const CANTIDAD_POR_TANDA = 5;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const respuesta = await fetch(URL_API);
-        todasLasPublicaciones = await respuesta.json();
+        if (!respuesta.ok) throw new Error('Error al conectar con Backend');
         
+        todasLasPublicaciones = await respuesta.json();
         cargarMasPublicaciones();
     } catch (error) {
-        console.error("Error con la API:", error);
-        galeria.innerHTML = "<p style='text-align:center; padding:20px;'>Error al cargar publicaciones.</p>";
+        console.error("Error API:", error);
+        galeria.innerHTML = "<p style='text-align:center; padding:20px;'>No se pudo conectar con el servidor.</p>";
     }
 });
 
 function cargarMasPublicaciones() {
-
     if (indiceActual >= todasLasPublicaciones.length) return;
 
     const siguientes = todasLasPublicaciones.slice(indiceActual, indiceActual + CANTIDAD_POR_TANDA);
@@ -34,30 +34,23 @@ function cargarMasPublicaciones() {
 
         div.innerHTML = `
             <div class="publicacion-header">
-                👤 ${pub.nombre_usuario || 'Anónimo'} 
-                <span style="font-weight:normal; font-size:0.8em; float:right">
+                👤 ${pub.nombre_usuario || 'Usuario'} 
+                <span style="font-size:0.8em; float:right">
                     ${new Date(pub.fecha_publicacion).toLocaleDateString()}
                 </span>
             </div>
-            
             <img src="${imagenSrc}" alt="Publicación">
-            
             <div class="publicacion-descripcion">
                 <strong>${pub.titulo}</strong><br>
                 ${pub.descripcion}
             </div>
-            
             <div class="publicacion-footer">
-                <span class="likes" onclick="darLike(${pub.id}, this)" style="cursor:pointer">
-                    ❤️ <span id="contador-likes-${pub.id}">${pub.likes || 0}</span> likes
-                </span>
-                <span class="comentariosBtn" style="cursor:pointer">
-                    💬 Ver comentarios
-                </span>
+                <span>📍 ${pub.ubicacion}</span>
+                <span class="comentariosBtn" style="cursor:pointer">💬 Ver comentarios</span>
             </div>
         `;
         div.querySelector(".comentariosBtn").addEventListener("click", () => {
-            abrirModal(pub.nombre_usuario, pub.titulo);
+            abrirModal(pub.nombre_usuario);
         });
 
         galeria.appendChild(div);
@@ -71,35 +64,13 @@ window.addEventListener("scroll", () => {
     }
 });
 
-function abrirModal(usuario, titulo) {
+function abrirModal(usuario) {
     commentsContainer.innerHTML = `
-        <p><strong>Comentarios sobre la publicación de ${usuario}:</strong></p>
-        <hr style="margin: 10px 0">
-        <p>👤 <strong>UsuarioRandom:</strong> Que linda mascota! 😍</p>
-        <p>👤 <strong>OtroVecino:</strong> Sigue en adopción?</p>
-        <p>👤 <strong>RefugioZonaNorte:</strong> Compartido! 🐾</p>
+        <p><strong>Comentarios sobre mascota de ${usuario}:</strong></p>
+        <p>¡Qué lindo! 😍</p>
     `;
     modal.style.display = "flex";
 }
 
 closeModal.addEventListener("click", () => modal.style.display = "none");
-window.addEventListener("click", (e) => { 
-    if (e.target === modal) modal.style.display = "none"; 
-});
-
-async function darLike(idPublicacion, elemento) {
-    try {
-        elemento.style.color = '#ff0015ff';
-        await fetch(`http://localhost:3000/api/publicaciones/like/${idPublicacion}`, {
-            method: 'PUT'
-        });
-        
-        const spanContador = document.getElementById(`contador-likes-${idPublicacion}`);
-        let cantidad = parseInt(spanContador.innerText);
-        spanContador.innerText = cantidad + 1;
-        
-    } catch (error) {
-        elemento.style.color = '';
-        console.error("Error al dar like:", error);
-    }
-}
+window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
