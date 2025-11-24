@@ -12,15 +12,15 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { nombre_completo, email, contrasenia, telefono, direccion } = req.body;
+  const { nombre, email, contrasenia, telefono, direccion } = req.body;
 
   const query = `
-    INSERT INTO usuarios (nombre_completo, email, contrasenia, telefono, direccion)
+    INSERT INTO usuarios (nombre, email, contrasenia, telefono, direccion)
     VALUES ($1, $2, $3, $4, $5)
     RETURNING *
   `;
   
-  const valores = [nombre_completo, email, contrasenia, telefono, direccion];
+  const valores = [nombre, email, contrasenia, telefono, direccion];
 
   try {
     const resultado = await pool.query(query, valores);

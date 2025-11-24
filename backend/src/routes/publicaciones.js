@@ -9,10 +9,10 @@ router.get('/', async (req, res) => {
         p.id, p.titulo, p.descripcion, p.fecha_publicacion, p.ubicacion,
         m.nombre AS nombre_mascota,
         m.especie,
-        u.nombre_completo AS nombre_usuario
+        u.nombre AS nombre_usuario
       FROM publicaciones p
       JOIN mascotas m ON p.mascota_id = m.id
-      JOIN usuarios u ON m.usuario_id = u.id
+      JOIN usuarios u ON m.duenio_id = u.id
       ORDER BY p.fecha_publicacion DESC
     `;
     
@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
 });
 
 router.post('/', async (req, res) => {
