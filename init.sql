@@ -11,6 +11,7 @@ CREATE TABLE mascotas (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     especie VARCHAR(50) NOT NULL,
+    edad INT NOT NULL,
     raza VARCHAR(50) DEFAULT 'no_tiene',
     tamanio VARCHAR(40),
     duenio_id INT REFERENCES usuarios(id)
