@@ -9,10 +9,10 @@ const puerto = 3000;
 app.use(cors());
 app.use(express.json());
 
-const rutasMascotas = require('./src/routes/mascotas');
-const rutasAdopciones = require('./src/routes/adopciones');
-const rutasUsuarios = require('./src/routes/usuarios');
-const rutasPublicaciones = require('./src/routes/publicaciones');
+const rutasMascotas = require('./routes/mascotas');
+const rutasAdopciones = require('./routes/adopciones');
+const rutasUsuarios = require('./routes/usuarios');
+const rutasPublicaciones = require('./routes/publicaciones');
 
 app.use('/api/mascotas', rutasMascotas);
 app.use('/api/adopciones', rutasAdopciones);
