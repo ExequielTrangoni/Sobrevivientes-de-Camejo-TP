@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetConnect - Usuario</title>
+    <link rel="stylesheet" href="../css/style-usuario.css">
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">🐾 PetConnect</a>
+        <nav>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Adopciones</a></li>
+                <li><a href="#">Usuario</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="usuarioPerfil">
+        <section class="perfil">
+            <img id="fotoPerfil" src="" alt="Foto de perfil" class="fotoPerfil">
+            <h2>Mi Perfil</h2>
+            <p id="nombre"></p>
+            <p id="nickname"></p>
+            <p id="contrasenia"></p>
+            <p id="email"></p>
+            <p id="nacimiento"></p>
+            <p id="ciudad"></p>
+            <p id="biografia"></p>
+            <button id="botonEditarPerfil">Editar Perfil</button>
+        </section>
+
+        <section class="publicaciones">
+            <h3>Mis Publicaciones (<span id="totalPublicaciones">0</span>)</h3>
+            <div id="misPublicaciones"></div>
+        </section>
+
+        <div class="sidebar">
+            <section class="amigos">
+                <h3>Amigos (<span id="totalAmigos">0</span>)</h3>
+                <ul id="listaAmigos"></ul>
+            </section>
+
+            <section class="mascotas">
+                <h3>Mascotas (<span id="totalMascotas">0</span>)</h3>
+                <div id="galeriaMascotas"></div>
+
+                <form id="formMascota" class="formAgregar">
+                    <label for="nombreMascota"></label>
+                    <input type="text" id="nombreMascota" placeholder="Nombre de la mascota" required>
+                    <button type="submit">Agregar Mascota</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <div id="modalEditar" class="modal" style="display:none;">
+        <div class="contenidoModal">
+            <span class="cerrar" id="cerrarModal">&times;</span>
+            <h3>Editar Perfil</h3>
+            <form id="formPerfil">
+                <div class="campoForm">
+                    <label for="inputNombre">Nombre:</label>
+                    <input type="text" id="inputNombre">
+                </div>
+
+                <div class="campoForm">
+                    <label for="inputNickname">Nickname:</label>
+                    <input type="text" id="inputNickname">
+                </div>
+
+                <div class="campoForm">
+                    <label for="inputContrasenia">Contrasenia:</label>
+                    <input type="text" id="inputContrasenia">
+                </div>
+
+                <div class="campoForm">
+                    <label for="inputEmail">Email:</label>
+                    <input type="email" id="inputEmail">
+                </div>
+
+                <div class="campoForm">
+                    <label for="inputNacimiento">Fecha de Nacimiento:</label>
+                    <input type="date" id="inputNacimiento">
+                </div>
+
+                <div class="campoForm">
+                    <label for="inputCiudad">Ciudad:</label>
+                    <input type="text" id="inputCiudad">
+                </div>
+
+                <div class="campoForm">
+                    <label for="inputBiografia">Biografia:</label>
+                    <input type="text" id="inputBiografia">
+                </div>
+
+                <button type="submit">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 PetConnect | Con amor para los animales 🐾</p>
+    </footer>
+
+    <script src="../js/usuario.js"></script>
+</body>
+</html>

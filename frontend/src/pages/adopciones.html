@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PetConnect - Adopciones</title>
+  <link rel="stylesheet" href="../css/style-adopciones.css" />
+</head>
+<body>
+  <nav class="barra-navegacion">
+    <div class="nav-izquierda">
+      <h1>🐾 PetConnect</h1>
+    </div>
+    <div class="nav-derecha">
+      <a href="index.html">Inicio</a>
+      <a href="adopciones.html" class="activo">Adopciones</a>
+      <a href="perfil.html">Usuario</a>
+    </div>
+  </nav>
+
+  <main class="fondo-principal">
+    <header class="seccion-busqueda">
+      <div class="contenido-busqueda">
+        <h1>Encuentra a tu nuevo mejor amigo</h1>
+        <p>Explorá las mascotas disponibles para adopción 💕</p>
+        <div class="buscador">
+          <button id="botonVerMascotas" class="boton-ver-mascotas">Ver Mascotas</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="ventanaMascotas" class="ventana">
+      <div class="ventana-contenido">
+        <h2>Selecciona una categoría</h2>
+        <div class="opciones">
+          <button class="opcion">🐶 Perro</button>
+          <button class="opcion">🐱 Gato</button>
+          <button class="opcion">🐾 Otro</button>
+        </div>
+        <button id="cerrarVentana" class="cerrar">Cerrar</button>
+      </div>
+    </div>
+
+    <section id="contenedorPublicaciones" class="publicaciones">
+    </section>
+  </main>
+  <footer class="footer">
+    <p>© 2025 - PetConnect | Adopta una mascota y conviértelo en tu mejor amigo 🐾</p>
+  </footer>
+  <script src="../js/adopciones.js" defer></script>
+</body>
+</html>

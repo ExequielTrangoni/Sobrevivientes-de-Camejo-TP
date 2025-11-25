@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: cursive;
+}
+
+body {
+    background-color: #ffffff;
+    color: #222121;
+}
+
+header {
+    background-color: #ff914d;
+    color: rgb(255, 255, 255);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 28px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.inicio-titulo {
+    text-align: center;
+    padding: 80px 20px;
+    background: url("../images/imagen-fondo1.jpg") center/cover no-repeat;
+    color: rgb(51, 51, 51);
+}
+
+.logo {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+.inicio-titulo h2 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.inicio-titulo button {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background-color: #ff914d;
+    border: none;
+    color: white;
+    font-size: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    background-color: #e4e3e3;
+}
+
+
+.galeria {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 30px;
+}
+
+
+.publicacion {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.publicacion-header {
+    padding: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.publicacion img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.publicacion-footer {
+    padding: 10px;
+    font-size: 13px;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+}
+
+.likes {
+    font-size: 13px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.contenido-modal {
+    background: white;
+    width: 400px;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 10px;
+    animation: fadeIn .3s ease-in-out;
+}
+
+.close {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to {opacity: 1; transform: scale(1);}
+}
+
+.publicacion-descripcion {
+    padding: 10px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.3;
+}
