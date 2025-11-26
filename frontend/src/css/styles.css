@@ -5,6 +5,35 @@
     font-family: cursive;
 }
 
+.boton-crear {
+    background-color: #ff914d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.boton-crear:hover {
+    background-color: #e67e3a;
+    transform: scale(1.1);
+}
+
+.boton-crear:active {
+    transform: scale(0.95);
+}
+
 body {
     background-color: #ffffff;
     color: #222121;
