@@ -229,8 +229,23 @@ footer {
     font-size: 1.1rem;
     cursor: pointer;
     margin-top: 10px;
+    text-decoration: none; 
+    display: inline-block;
 }
 
 .btn-publicar:hover {
     background-color: #e07b3b;
 }
+
+.contenido-modal {
+    text-align: center;
+}
+
+.advertencia {
+    color: #ff914d;
+}
+
+.texto-advertencia {
+    margin: 20px 0; font-size: 1.1rem;
+}
+
