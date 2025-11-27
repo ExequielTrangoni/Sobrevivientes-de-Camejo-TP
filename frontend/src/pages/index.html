@@ -26,16 +26,36 @@
         <button class="boton-ver-refugios">Ver Refugios</button>
     </section>
 
-    <div class="galeria">
+<button id="btn-abrir-crear" class="boton-flotante">+</button>
 
-        <div class="modal" id="modal">
-            <div class="contenido-modal">
-                <span class="close" id="cerrar-modal">&times;</span>
-                <h3>Comentarios</h3>
-                <div id="conteiner-comentarios"></div>
-            </div>
+    <div id="modal-comments" class="modal">
+        <div class="contenido-modal">
+            <span class="cerrar-btn" id="cerrar-modal-comments">&times;</span>
+            <h3>Comentarios</h3>
+            <div id="conteiner-comentarios">
+                </div>
         </div>
-        <button class="boton-crear">+</button>
+    </div>
+
+    <div id="modal-crear" class="modal">
+        <div class="contenido-modal">
+            <span class="cerrar-btn" id="cerrar-modal-crear">&times;</span>
+            <h3>Nueva Publicación 🐾</h3>
+            <form id="form-publicacion" class="form-estilo">
+                <label for="input-titulo">Título</label>
+                <input type="text" id="input-titulo" placeholder="Ej: Perro busca casa" required>
+                <label for="input-ubicacion">Ubicación</label>
+                <input type="text" id="input-ubicacion" placeholder="Ej: Palermo, CABA" required>
+                <label for="input-desc">Descripción</label>
+                <textarea id="input-desc" rows="3" placeholder="Contanos sobre la mascota..."></textarea>
+                <label for="select-mascota">Mascota</label>
+                <select id="select-mascota" required>
+                    <option value="">Cargando mascotas...</option>
+                </select>
+
+                <button type="submit" class="btn-publicar">Publicar</button>
+            </form>
+        </div>
     </div>
 
     <footer>

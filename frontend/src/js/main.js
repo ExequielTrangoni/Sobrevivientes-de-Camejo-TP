@@ -6,7 +6,7 @@ const commentsContainer = document.getElementById("conteiner-comentarios");
 
 let todasLasPublicaciones = [];
 let indiceActual = 0;
-const CANTIDAD_POR_TANDA = 5;
+const CANTIDAD_POR_TANDA = 6;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
