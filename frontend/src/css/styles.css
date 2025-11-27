@@ -5,7 +5,7 @@
     font-family: cursive;
 }
 
-.boton-flotante {
+.boton-abrir-crear {
     background-color: #ff914d;
     color: white;
     border: none;
@@ -25,12 +25,12 @@
     z-index: 1000;
 }
 
-.boton-flotante:hover {
+.boton-abrir-crear:hover {
     background-color: #e67e3a;
     transform: scale(1.1);
 }
 
-.boton-flotante:active {
+.boton-abrir-crear:active {
     transform: scale(0.95);
 }
 
@@ -164,14 +164,12 @@ footer {
     animation: fadeIn .3s ease-in-out;
 }
 
-.cerrar-btn {
+.cerrar-modal {
     float: right;
     font-size: 20px;
     cursor: pointer;
 }
-.cerrar-btn:hover {
-    color: #ff914d;
-}
+
 @keyframes fadeIn {
     from {opacity: 0; transform: scale(0.95);}
     to {opacity: 1; transform: scale(1);}
@@ -187,37 +185,52 @@ footer {
 .form-estilo {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 15px;
+    gap: 15px;
+    margin-top: 10px;
 }
 
 .form-estilo label {
     font-weight: bold;
     font-size: 0.9rem;
-    color: #555;
+    color: #333;
+    margin-bottom: -5px;
+    text-align: left;
 }
+
 
 .form-estilo input, 
 .form-estilo textarea, 
 .form-estilo select {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-family: inherit;
     width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-family: cursive;
+}
+
+.form-estilo input:focus, 
+.form-estilo textarea:focus, 
+.form-estilo select:focus {
+    outline: none;
+    border-color: #ff914d;
+    background-color: #fff;
 }
 
 .btn-publicar {
     background-color: #ff914d;
     color: white;
     border: none;
-    padding: 12px;
+    padding: 15px;
     border-radius: 8px;
     font-weight: bold;
+    font-size: 1.1rem;
     cursor: pointer;
     margin-top: 10px;
-    font-size: 1rem;
 }
+
 .btn-publicar:hover {
     background-color: #e07b3b;
 }

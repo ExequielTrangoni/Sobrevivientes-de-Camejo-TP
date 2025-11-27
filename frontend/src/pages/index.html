@@ -26,20 +26,21 @@
         <button class="boton-ver-refugios">Ver Refugios</button>
     </section>
 
-<button id="btn-abrir-crear" class="boton-flotante">+</button>
+    <div class="galeria">
 
-    <div id="modal-comments" class="modal">
-        <div class="contenido-modal">
-            <span class="cerrar-btn" id="cerrar-modal-comments">&times;</span>
-            <h3>Comentarios</h3>
-            <div id="conteiner-comentarios">
-                </div>
+        <div class="modal" id="modal">
+            <div class="contenido-modal">
+                <span class="cerrar-modal" id="cerrar-modal-comentarios">&times;</span>
+                <h3>Comentarios</h3>
+                <div id="conteiner-comentarios"></div>
+            </div>
         </div>
     </div>
-
+    
+    <button class="boton-abrir-crear" id="boton-abrir-publi">+</button>
     <div id="modal-crear" class="modal">
         <div class="contenido-modal">
-            <span class="cerrar-btn" id="cerrar-modal-crear">&times;</span>
+            <span class="cerrar-modal" id="cerrar-modal-publicacion">&times;</span>
             <h3>Nueva Publicación 🐾</h3>
             <form id="form-publicacion" class="form-estilo">
                 <label for="input-titulo">Título</label>

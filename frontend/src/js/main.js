@@ -1,8 +1,14 @@
 const URL_API = 'http://localhost:3000/api/publicaciones';
 const galeria = document.querySelector(".galeria");
 const modal = document.getElementById("modal");
-const closeModal = document.getElementById("cerrar-modal");
-const commentsContainer = document.getElementById("conteiner-comentarios");
+const quitarModal = document.getElementById("cerrar-modal-comentarios");
+const conteinerComentarios = document.getElementById("conteiner-comentarios");
+
+const btnAbrirCrear = document.getElementById('boton-abrir-publi');
+const modalCrear = document.getElementById('modal-crear');
+const btnCerrarCrear = document.getElementById('cerrar-modal-publicacion');
+const selectMascota = document.getElementById('select-mascota');
+const formPublicacion = document.getElementById('form-publicacion');
 
 let todasLasPublicaciones = [];
 let indiceActual = 0;
@@ -65,12 +71,33 @@ window.addEventListener("scroll", () => {
 });
 
 function abrirModal(usuario) {
-    commentsContainer.innerHTML = `
+    conteinerComentarios.innerHTML = `
         <p><strong>Comentarios sobre mascota de ${usuario}:</strong></p>
         <p>¡Qué lindo! 😍</p>
     `;
     modal.style.display = "flex";
 }
 
-closeModal.addEventListener("click", () => modal.style.display = "none");
+quitarModal.addEventListener("click", () => modal.style.display = "none");
 window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+
+btnAbrirCrear.addEventListener('click', async () => {
+    modalCrear.style.display = 'flex';
+    
+    try {
+        const res = await fetch(`http://localhost:3000/api/mascotas/usuario/${ID_USUARIO}`);
+        const mascotas = await res.json();
+
+        selectMascota.innerHTML = '<option value="">Seleccioná una mascota...</option>';
+        mascotas.forEach(m => {
+            const option = document.createElement('option');
+            option.value = m.id;
+            option.textContent = m.nombre;
+            selectMascota.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error cargando mascotas");
+    }
+});
+
+btnCerrarCrear.addEventListener('click', () => modalCrear.style.display = 'none');
