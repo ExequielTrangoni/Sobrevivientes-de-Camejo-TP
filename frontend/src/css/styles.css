@@ -5,6 +5,35 @@
     font-family: cursive;
 }
 
+.boton-abrir-crear {
+    background-color: #ff914d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.boton-abrir-crear:hover {
+    background-color: #e67e3a;
+    transform: scale(1.1);
+}
+
+.boton-abrir-crear:active {
+    transform: scale(0.95);
+}
+
 body {
     background-color: #ffffff;
     color: #222121;
@@ -135,7 +164,7 @@ footer {
     animation: fadeIn .3s ease-in-out;
 }
 
-.close {
+.cerrar-modal {
     float: right;
     font-size: 20px;
     cursor: pointer;
@@ -151,6 +180,73 @@ footer {
     font-size: 14px;
     color: #444;
     line-height: 1.3;
+}
+
+.form-estilo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.form-estilo label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: -5px;
+    text-align: left;
+}
+
+
+.form-estilo input, 
+.form-estilo textarea, 
+.form-estilo select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-family: cursive;
+}
+
+.form-estilo input:focus, 
+.form-estilo textarea:focus, 
+.form-estilo select:focus {
+    outline: none;
+    border-color: #ff914d;
+    background-color: #fff;
+}
+
+.btn-publicar {
+    background-color: #ff914d;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration: none; 
+    display: inline-block;
+}
+
+.btn-publicar:hover {
+    background-color: #e07b3b;
+}
+
+.contenido-modal {
+    text-align: center;
+}
+
+.advertencia {
+    color: #ff914d;
+}
+
+.texto-advertencia {
+    margin: 20px 0; font-size: 1.1rem;
 }
 
 

@@ -12,9 +12,9 @@
         <a href="index.html" class="logo">🐾 PetConnect</a>
         <nav>
             <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Adopciones</a></li>
-                <li><a href="#">Usuario</a></li>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./adopciones.html">Adopciones</a></li>
+                <li><a href="./usuario.html">Usuario</a></li>
             </ul>
         </nav>
     </header>
@@ -22,21 +22,55 @@
     <section class="inicio-titulo">
         <h2>Encontrá a tu compañero de vida!</h2>
         <p>Conecta con mascotas que necesitan amor y cariño 💛</p>
-        <button class="boton-ver-mascotas">Ver Mascotas</button>
-        <button class="boton-ver-refugios">Ver Refugios</button>
+        <button class="boton-ver-mascotas" onclick="window.location.href='./adopciones.html'">Ver Mascotas</button>
+        <button class="boton-ver-refugios" >Ver Refugios</button>
     </section>
 
     <div class="galeria">
 
         <div class="modal" id="modal">
             <div class="contenido-modal">
-                <span class="close" id="cerrar-modal">&times;</span>
+                <span class="cerrar-modal" id="cerrar-modal-comentarios">&times;</span>
                 <h3>Comentarios</h3>
                 <div id="conteiner-comentarios"></div>
             </div>
         </div>
-
     </div>
+    
+    <button class="boton-abrir-crear" id="boton-abrir-publi">+</button>
+    <div id="modal-crear" class="modal">
+        <div class="contenido-modal">
+            <span class="cerrar-modal" id="cerrar-modal-publicacion">&times;</span>
+            <h3>Nueva Publicación 🐾</h3>
+            <form id="form-publicacion" class="form-estilo">
+                <label for="input-titulo">Título</label>
+                <input type="text" id="input-titulo" placeholder="Ej: Perro busca casa" required>
+                <label for="input-ubicacion">Ubicación</label>
+                <input type="text" id="input-ubicacion" placeholder="Ej: Palermo, CABA" required>
+                <label for="input-desc">Descripción</label>
+                <textarea id="input-desc" rows="3" placeholder="Contanos sobre la mascota..."></textarea>
+                <label for="select-mascota">Mascota</label>
+                <select id="select-mascota" required>
+                    <option value="">Cargando mascotas...</option>
+                </select>
+
+                <button type="submit" class="btn-publicar">Publicar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-alerta-login" class="modal">
+    <div class="contenido-modal">
+        <span class="cerrar-btn" onclick="cerrarModalLogin()">&times;</span>
+        <h3 class="advertencia">⚠️ Atención</h3>
+        <p class="texto-advertencia">
+            Necesitas iniciar sesión para subir una publicación.
+        </p>
+        <a href="pages/login.html" class="btn-publicar">
+            Ir a Iniciar Sesión
+        </a>
+    </div>
+</div>
 
     <footer>
         <p>© 2025 PetConnect | Con amor para los animales 🐾</p>
