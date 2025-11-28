@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/registro', async (req, res) => {
   const { nombre, email, contrasenia, telefono, direccion } = req.body;
 
   const query = `
@@ -58,5 +58,25 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.post('/login', async (req, res) => {
+  const { email, contrasenia } = req.body;
+
+  try {
+    const query = 'SELECT * FROM usuarios WHERE email = $1 AND contrasenia = $2';
+    const valores = [email, contrasenia];
+    
+    const resultado = await pool.query(query, valores);
+
+    if (resultado.rows.length > 0) {
+      res.json(resultado.rows[0]);
+    } else {
+      res.status(401).json({ error: 'Email o contraseña incorrectos' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 module.exports = router;
