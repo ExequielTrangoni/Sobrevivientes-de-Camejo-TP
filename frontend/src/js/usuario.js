@@ -1,31 +1,17 @@
-const usuario = {
-    id: 1,
-    nombre: "Juan Pérez",
-    nickname: "Dragon1234",
-    contrasenia: "dragon",
-    email: "jperez@gmail.com",
-    nacimiento: "2005-02-14",
-    ciudad: "Buenos Aires",
-    biografia: "Me encantan los animales",
-    foto: "../images/gato-1.jpg"
-};
+const API_USUARIO = "http://localhost:3000/api/usuarios";
+const API_MASCOTAS = "http://localhost:3000/api/mascotas";
+const API_PUBLICACIONES = "http://localhost:3000/api/publicaciones";
 
-const amigos = [
-    { id: 2, nickname: "Luna1234"},
-    { id: 3, nickname: "MichiLover"},
-    { id: 4, nickname: "DoggyLove"}
-];
 
-const mascotas = [
-    { id: 1, nombre: "Toby", img: "../images/perro-1.jpg" },
-    { id: 2, nombre: "Michi", img: "../images/perro-1.jpg" }
-];
+let usuarioId = localStorage.getItem('usuarioId');
+let usuario = {};
+let amigos = [];
+let mascotas = [];
+let publicaciones = [];
 
-const publicaciones = [
-    { id: 1, img: "../images/publicacion-ejemplo.webp", desc: "Día en el parque 🐕" },
-    { id: 2, img: "../images/publicacion-ejemplo.webp", desc: "Michi durmiendo 😴" }
-];
 
+const modalLogin = document.getElementById("modalLogin");
+const botonIrLogin = document.getElementById("botonIrLogin");
 
 const listaAmigos = document.getElementById("listaAmigos");
 const galeriaMascotas = document.getElementById("galeriaMascotas");
@@ -41,155 +27,211 @@ const formPerfil = document.getElementById("formPerfil");
 const formMascota = document.getElementById("formMascota");
 
 
+document.addEventListener("DOMContentLoaded", () => {
+    const usuarioId = localStorage.getItem('usuarioId');
+
+    if (!usuarioId) {
+        modalLogin.style.display = "flex";
+
+        botonIrLogin.addEventListener("click", () => {
+            window.location.href = './login.html';
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modalLogin) window.location.href = './login.html';
+        });
+    }else {
+        initPerfil();
+    }
+});
+
+
 function actualizarTotales() {
     totalAmigos.textContent = amigos.length;
     totalMascotas.textContent = mascotas.length;
     totalPublicaciones.textContent = publicaciones.length;
 }
 
+async function cargarPerfil() {
+    try {
+        const res = await fetch(`${API_USUARIO}/${usuarioId}`);
+        usuario = await res.json();
+        renderPerfil();
+    } catch (err) {
+        console.error('Error al cargar perfil:', err);
+    }
+}
+
 function renderPerfil() {
-    document.getElementById("fotoPerfil").src = usuario.foto;
+    document.getElementById("fotoPerfil").src = usuario.imagen_usuario || "../images/gato-1.jpg";
     document.getElementById("nombre").textContent = `Nombre: ${usuario.nombre}`;
-    document.getElementById("nickname").textContent = `Nickname: ${usuario.nickname}`;
-    document.getElementById("contrasenia").textContent = `Contraseña: ${"*".repeat(usuario.contrasenia.length)}`;
+    document.getElementById("nickname").textContent = `Nickname: ${usuario.nickname || ''}`;
+    document.getElementById("contrasenia").textContent = `Contraseña: ${"*".repeat(usuario.contrasenia?.length || 0)}`;
     document.getElementById("email").textContent = `Email: ${usuario.email}`;
-    document.getElementById("nacimiento").textContent = `Nacimiento: ${usuario.nacimiento}`;
-    document.getElementById("ciudad").textContent = `Ciudad: ${usuario.ciudad}`;
-    document.getElementById("biografia").textContent = `Biografia: ${usuario.biografia}`;
+    document.getElementById("nacimiento").textContent = `Nacimiento: ${usuario.nacimiento || ''}`;
+    document.getElementById("ciudad").textContent = `Ciudad: ${usuario.ciudad || ''}`;
+    document.getElementById("biografia").textContent = `Biografía: ${usuario.biografia || ''}`;
+}
+
+async function cargarAmigos() {
+    try {
+        const res = await fetch(`${API_USUARIO}/${usuarioId}/amigos`);
+        amigos = await res.json();
+        renderAmigos();
+    } catch (err) {
+        console.error('Error al cargar amigos:', err);
+    }
 }
 
 function renderAmigos() {
-    listaAmigos.innerHTML = "";
-    if (amigos.length === 0) {
-        listaAmigos.innerHTML = "<p>Aun no tienes amigos</p>";
-        return;
-    }
-    amigos.forEach((amigo) => {
-        const li = document.createElement("li");
-        li.className = "amigoItem";
-        li.dataset.id = amigo.id;
-        li.innerHTML = `
-            <div class="amigoContenedor">
-                <span class="amigoNombre">${amigo.nickname}</span>
-                <button class="eliminarAmigo" title="Eliminar amigo">🗑 Eliminar</button>
-            </div>
-        `;
-        li.querySelector(".eliminarAmigo").addEventListener("click", (e) => {
-            const id = parseInt(e.target.closest(".amigoItem").dataset.id);
-            const index = amigos.findIndex(a => a.id === id);
-            if (index !== -1) {
-                amigos.splice(index, 1);
-                renderAmigos();
-                actualizarTotales();
-            }
+    listaAmigos.innerHTML = '';
+
+    if (!amigos.length)
+        return listaAmigos.innerHTML = '<p>No tienes amigos</p>';
+
+    amigos.forEach(a => {
+        const li = document.createElement('li');
+        li.className = 'amigoItem';
+
+        const img = document.createElement('img');
+        img.className = 'fotoAmigo';
+        img.src = a.imagen_usuario ? `${API_USUARIO}/${a.imagen_usuario}` : '../images/gato-1.jpg';
+        img.alt = a.nombre;
+        img.width = 40;
+        img.height = 40;
+
+        const span = document.createElement('span');
+        span.textContent = a.nombre;
+
+        const btn = document.createElement('button');
+        btn.textContent = '🗑 Eliminar';
+        btn.addEventListener('click', async () => {
+            await fetch(`${API_USUARIO}/${usuarioId}/amigos/${a.id}`, {
+                method: 'DELETE'
+            });
+            await cargarAmigos();
+            actualizarTotales();
         });
+
+        li.appendChild(img);
+        li.appendChild(span);
+        li.appendChild(btn);
+
         listaAmigos.appendChild(li);
     });
 }
 
 
-function renderMascotas() {
-    galeriaMascotas.innerHTML = "";
-    if (mascotas.length === 0) {
-        galeriaMascotas.innerHTML = "<p>Aun no tienes mascotas</p>";
-        return;
+async function cargarMascotas() {
+    try {
+        const res = await fetch(`${API_MASCOTAS}?duenio_id=${usuarioId}`);
+        mascotas = await res.json();
+        renderMascotas();
+    } catch (err) {
+        console.error('Error al cargar mascotas:', err);
     }
-    mascotas.forEach((mascota) => {
-        const div = document.createElement("div");
-        div.className = "mascota";
-        div.dataset.id = mascota.id;
+}
+
+function renderMascotas() {
+    galeriaMascotas.innerHTML = '';
+    if (!mascotas.length) return galeriaMascotas.innerHTML = '<p>No tienes mascotas</p>';
+
+    mascotas.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'mascota';
         div.innerHTML = `
-            <img src="${mascota.img}" alt="${mascota.nombre}">
-            <p>${mascota.nombre}</p>
-            <button class="eliminarMascota" title="Eliminar mascota">🗑 Eliminar</button>
+            <img src="${m.imagen_mascota || '../images/perro-1.jpg'}" alt="${m.nombre}">
+            <p>${m.nombre}</p>
+            <button class="eliminarMascota">🗑 Eliminar</button>
         `;
-        div.querySelector(".eliminarMascota").addEventListener("click", (e) => {
-            const id = parseInt(e.target.closest(".mascota").dataset.id);
-            const index = mascotas.findIndex(m => m.id === id);
-            if (index !== -1) {
-                mascotas.splice(index, 1);
-                renderMascotas();
-                actualizarTotales();
-            }
+        div.querySelector('.eliminarMascota').addEventListener('click', async () => {
+            await fetch(`${API_MASCOTAS}/${m.id}`, { method: 'DELETE' });
+            await cargarMascotas();
+            actualizarTotales();
         });
         galeriaMascotas.appendChild(div);
     });
 }
 
+async function cargarPublicaciones() {
+    try {
+        const res = await fetch(`${API_PUBLICACIONES}?usuario_id=${usuarioId}`);
+        publicaciones = await res.json();
+        renderPublicaciones();
+    } catch (err) {
+        console.error('Error al cargar publicaciones.', err);
+    }
+}
 
 function renderPublicaciones() {
-    galeriaPublicaciones.innerHTML = "";
-    if (publicaciones.length === 0) {
-        galeriaPublicaciones.innerHTML = "<p>Aun no tienes publicaciones</p>";
-        return;
-    }
-    publicaciones.forEach(publi => {
-        const div = document.createElement("div");
-        div.className = "publicacion";
-        div.dataset.id = publi.id;
+    galeriaPublicaciones.innerHTML = '';
+    if (!publicaciones.length) return galeriaPublicaciones.innerHTML = '<p>No tienes publicaciones</p>';
+
+    publicaciones.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'publicacion';
         div.innerHTML = `
-            <button class="eliminarBoton" title="Eliminar publicación">🗑</button>
-            <img src="${publi.img}" alt="Publicación">
-            <p>${publi.desc}</p>
+            <button class="eliminarBoton">🗑</button>
+            <img src="${p.imagen_publicacion || '../images/publicacion-ejemplo.webp'}" alt="Publicación">
+            <p>${p.descripcion || p.titulo}</p>
         `;
-        div.querySelector(".eliminarBoton").addEventListener("click", (e) => {
-            const id = parseInt(e.target.closest(".publicacion").dataset.id);
-            const index = publicaciones.findIndex(p => p.id === id);
-            if (index !== -1) {
-                publicaciones.splice(index, 1);
-                renderPublicaciones();
-                actualizarTotales();
-            }
+        div.querySelector('.eliminarBoton').addEventListener('click', async () => {
+            await fetch(`${API_PUBLICACIONES}/${p.id}`, { method: 'DELETE' });
+            await cargarPublicaciones();
+            actualizarTotales();
         });
         galeriaPublicaciones.appendChild(div);
     });
 }
 
-
-
-botonEditar.addEventListener("click", () => {
-    document.getElementById("inputNombre").value = usuario.nombre;
-    document.getElementById("inputNickname").value = usuario.nickname;
-    document.getElementById("inputContrasenia").value = usuario.contrasenia;
-    document.getElementById("inputEmail").value = usuario.email;
-    document.getElementById("inputNacimiento").value = usuario.nacimiento;
-    document.getElementById("inputCiudad").value = usuario.ciudad;
-    document.getElementById("inputBiografia").value = usuario.biografia;
-    modalEditar.style.display = "flex";
+botonEditar.addEventListener('click', () => {
+    document.getElementById("inputNombre").value = usuario.nombre || '';
+    document.getElementById("inputNickname").value = usuario.nickname || '';
+    document.getElementById("inputContrasenia").value = usuario.contrasenia || '';
+    document.getElementById("inputEmail").value = usuario.email || '';
+    document.getElementById("inputNacimiento").value = usuario.nacimiento || '';
+    document.getElementById("inputCiudad").value = usuario.ciudad || '';
+    document.getElementById("inputBiografia").value = usuario.biografia || '';
+    modalEditar.style.display = 'flex';
 });
 
-botonCerrarEditar.addEventListener("click", () => modalEditar.style.display = "none");
-window.addEventListener("click", (e) => {
-    if (e.target === modalEditar) modalEditar.style.display = "none";
-});
+botonCerrarEditar.addEventListener('click', () => modalEditar.style.display = 'none');
+window.addEventListener('click', e => { if (e.target === modalEditar) modalEditar.style.display = 'none'; });
 
-formMascota.addEventListener("submit", (e) => {
+formPerfil.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const nombre = document.getElementById("nombreMascota").value.trim();
-    if (!nombre) return;
-    const nuevoId = mascotas.length ? mascotas[mascotas.length - 1].id + 1 : 1;
-    mascotas.push({ id: nuevoId, nombre, img: "../images/perro-1.jpg" });
-    renderMascotas();
-    actualizarTotales();
-    formMascota.reset();
+    const datos = {
+        nombre: document.getElementById("inputNombre").value,
+        nickname: document.getElementById("inputNickname").value,
+        contrasenia: document.getElementById("inputContrasenia").value,
+        email: document.getElementById("inputEmail").value,
+        nacimiento: document.getElementById("inputNacimiento").value,
+        ciudad: document.getElementById("inputCiudad").value,
+        biografia: document.getElementById("inputBiografia").value
+    };
+    try {
+        await fetch(`${API_USUARIO}/${usuarioId}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(datos)
+        });
+        await cargarPerfil();
+        modalEditar.style.display = 'none';
+    } catch (err) {
+        console.error('Error al actualizar perfil.', err);
+    }
 });
 
-formPerfil.addEventListener("submit", (e) => {
-    e.preventDefault();
-    usuario.nombre = document.getElementById("inputNombre").value;
-    usuario.nickname = document.getElementById("inputNickname").value;
-    usuario.contrasenia = document.getElementById("inputContrasenia").value;
-    usuario.email = document.getElementById("inputEmail").value;
-    usuario.nacimiento = document.getElementById("inputNacimiento").value;
-    usuario.ciudad = document.getElementById("inputCiudad").value;
-    usuario.biografia = document.getElementById("inputBiografia").value;
-    renderPerfil();
-    modalEditar.style.display = "none";
-});
 
-
-renderPerfil();
-renderAmigos();
-renderMascotas();
-renderPublicaciones();
-actualizarTotales();
+async function initPerfil() {
+    try {
+        await cargarPerfil();
+        await cargarAmigos();
+        await cargarMascotas();
+        await cargarPublicaciones();
+        actualizarTotales();
+    } catch (err) {
+        console.error("Error inicializando la página:", err);
+        alert("Ocurrió un error al cargar los datos del perfil.");
+    }
+}
