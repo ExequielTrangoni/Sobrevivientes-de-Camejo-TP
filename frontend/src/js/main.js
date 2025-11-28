@@ -147,4 +147,4 @@ if (btnAbrirCrear) {
     });
 }
 
-window.addEventListener("click", (e) => { if (modalAlerta && e.target === modalAlerta) modalAlerta.style.display = "none"; });
+window.addEventListener("click", (e) => { if (modalAlerta && e.target === modalAlerta) { modalAlerta.style.display = "none"; modalCrear.style.display = "none"; }});
