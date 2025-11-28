@@ -1,105 +1,259 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const botonVerMascotas = document.getElementById("botonVerMascotas");
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const API_PUBLICACIONES = "http://localhost:3000/api/publicaciones_adopciones";
+  const API_ADOPCIONES = "http://localhost:3000/api/adopciones";
+  const contenedor = document.getElementById("contenedorPublicaciones");
+
   const ventana = document.getElementById("ventanaMascotas");
   const cerrarVentana = document.getElementById("cerrarVentana");
-  const contenedor = document.getElementById("contenedorPublicaciones");
+  const botonVerMascotas = document.getElementById("botonVerMascotas");
+  const botonesOpcion = document.querySelectorAll(".opcion");
+  const modal = document.getElementById("modalUsuario");
+  const modalContenido = document.getElementById("modalContenido");
+
+  async function obtenerUsuarioActual() {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    
+    try {
+      const resultado = await fetch("http://localhost:3000/api/autor/me", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (!resultado.ok) return null;
+      return await resultado.json();
+    } catch {
+      return null;
+    }
+  }
+
+
+  const usuarioActual = await obtenerUsuarioActual();
+
+  async function obtenerPublicaciones() {
+    const res = await fetch(API_PUBLICACIONES);
+    return await res.json();
+  }
+
+  async function obtenerSolicitudesUsuario() {
+    if (!usuarioActual) return [];
+    try {
+      const res = await fetch(`${API_ADOPCIONES}/usuario/${usuarioActual.id}`);
+      if (!res.ok) return [];
+      const data =  await res.json();
+      const mapa = {};
+      data.forEach(solicitud => {
+        mapa[solicitud.publicacion_adopciones_id] = solicitud;
+      });
+      return mapa;
+    } catch {
+      return [];
+    }
+  }
+
+  async function crearSolicitud(publicacion_adopciones_id) {
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Debes iniciar sesión para adoptar");
+      return null;
+    }
+
+    const res = await fetch(API_ADOPCIONES, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        publicacion_adopciones_id,
+        mensaje_solicitud: "Quiero adoptar esta mascota",
+      })
+    });
+
+    return await res.json();
+  }
+
+  async function actualizarSolicitud(id, estado) {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${API_ADOPCIONES}/${id}/estado`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ estado })
+    });
+
+    return await res.json();
+  }
+
+
+  async function mostrarPublicaciones(publicaciones, solicitudesMapa = {}) {
+    contenedor.innerHTML = "";
+
+    for (const pub of publicaciones) {
+
+      const solicitud = solicitudesMapa[pub.publicacion_adopciones_id] || null;
+
+      const div = document.createElement("div");
+      div.classList.add("publicacion");
+       
+      let img = '../images/imagen-otro.jpg';
+      if (pub.especie.toLowerCase() === 'perro') img = '../images/imagen-perro.jpg';
+      else if (pub.especie.toLowerCase() === 'gato') img = '../images/imagen-gato.jpg';
+
+      let emoji = '🐾';
+      if (pub.especie.toLowerCase() === 'perro') emoji = '🐶';
+      else if (pub.especie.toLowerCase() === 'gato') emoji = '🐱';
+
+
+      div.innerHTML = `
+        <img src="${pub.imagen_publicacion || pub.imagen_mascota  || img}" class="img">
+        <h3>${emoji} ${pub.nombre_mascota} busca hogar</h3>
+        <p><strong>Descripción:</strong> ${pub.descripcion}</p>
+        <p><strong>Requisitos:</strong> ${pub.requisitos}</p>
+        <p><strong>Publicado por:</strong>
+          <span class="nombre-usuario-click" data-id="${pub.usuario_id}" data-publicacion-id="${pub.publicacion_adopciones_id}">
+            Ver dueño
+          </span>
+        </p>
+        <p><strong>Estado:</strong> ${pub.estado_mascota}</p>
+        <div class="acciones"></div>
+      `;
+
+      const acciones = div.querySelector(".acciones");
+
+  
+      if (!usuarioActual) {
+        acciones.innerHTML = `<p>Inicia sesión para adoptar</p>`;
+      }
+
+      else if (solicitud) {
+        if (solicitud.adoptante_id === usuarioActual.id) {
+
+          if (solicitud.estado === "pendiente") {
+            acciones.innerHTML = `<p>⏳ Tu solicitud está pendiente</p>`;
+          }
+
+          if (solicitud.estado === "aceptada") {
+            acciones.innerHTML = `<p>🥳 ¡Fuiste aceptado!</p>`;
+          }
+
+          if (solicitud.estado === "rechazada") {
+            acciones.innerHTML = `<p>❌ Tu solicitud fue rechazada</p>`;
+          }
+        }
+        else if (usuarioActual.id === pub.usuario_id && solicitud.estado === "pendiente") {
+          acciones.innerHTML = `
+            <button class="boton-aceptar">Aceptar</button>
+            <button class="boton-rechazar">Rechazar</button>
+          `;
+
+          acciones.querySelector(".boton-aceptar")
+            .addEventListener("click", async () => {
+              await actualizarSolicitud(solicitud.id, "aceptada");
+              const nuevasSolicitudes = await obtenerSolicitudesUsuario();
+              mostrarPublicaciones(publicaciones, nuevasSolicitudes);
+            });
+
+          acciones.querySelector(".boton-rechazar")
+            .addEventListener("click", async () => {
+              await actualizarSolicitud(solicitud.id, "rechazada");
+              const nuevasSolicitudes = await obtenerSolicitudesUsuario();
+              mostrarPublicaciones(publicaciones, nuevasSolicitudes);
+            });
+        }
+
+        else {
+          acciones.innerHTML = `<p>Solicitud pendiente...</p>`;
+        }
+
+      }
+
+      else if (pub.estado_mascota === "no-adoptado") {
+        const boton = document.createElement("button");
+        boton.textContent = "Adoptar";
+        boton.addEventListener("click", async () => {
+          await crearSolicitud(pub.publicacion_adopciones_id);
+          const nuevasSolicitudes = await obtenerSolicitudesUsuario();
+          mostrarPublicaciones(publicaciones, nuevasSolicitudes);
+        });
+        acciones.appendChild(boton);
+      }
+      else {
+        acciones.innerHTML = `<p>🐾 Adoptado</p>`;
+      }
+      contenedor.appendChild(div);
+    }
+  }
 
   botonVerMascotas.addEventListener("click", () => {
     ventana.style.display = "flex";
   });
+
   cerrarVentana.addEventListener("click", () => {
     ventana.style.display = "none";
   });
-  window.addEventListener("click", (e) => {
+
+  ventana.addEventListener("click", e => {
     if (e.target === ventana) ventana.style.display = "none";
   });
 
-  const mascotas = [
-    {
-      id: 1,
-      tipoUsuario: "@refugioAmigosPeludos",
-      nombre: "🐶 Juan busca hogar",
-      imagen: "../images/perro-1.jpg",
-      descripcion: "Perro cariñoso, juguetón y obediente. Ideal para familias con niños.",
-      requisitos: "Tener espacio al aire libre y disponibilidad para paseos diarios.",
-      estado: "no-adoptado"
-    },
-    {
-      id: 2,
-      tipoUsuario: "@usuarioMarta",
-      nombre: "🐱 Luna busca hogar",
-      imagen: "../images/gato-1.jpg",
-      descripcion: "Gatita muy dulce, ya esterilizada y con vacunas al día.",
-      requisitos: "Tener espacio en el domicilio y disponibilidad para llevarla al veterinario.",
-      estado: "no-adoptado"
-    }
-  ];
-
-  mascotas.forEach(mascota => {
-    const publicacion = document.createElement("div");
-    publicacion.classList.add("publicacion");
-    publicacion.innerHTML = `
-      <div class="tarjeta-lado-izquierdo">
-        <div class="imagen-publicacion">
-          <div class="barra-usuario">${mascota.tipoUsuario}</div>
-          <img src="${mascota.imagen}" alt="${mascota.nombre}">
-        </div>
-        <div class="separador-horizontal"></div>
-        <button class="boton-adoptar" data-id="${mascota.id}">Adoptar</button>
-      </div>
-      <div class="separador-vertical"></div>
-      <div class="contenido-publicacion">
-        <h2 class="titulo-publicacion">${mascota.nombre}</h2>
-        <p><strong>Descripción:</strong> ${mascota.descripcion}</p>
-        <p><strong>Requisitos:</strong> ${mascota.requisitos}</p>
-        <div class="estado-contenedor">
-          <label>Estado:</label>
-          <select class="estado-seleccion" data-id="${mascota.id}">
-            <option value="no-adoptado" ${mascota.estado === "no-adoptado" ? "selected" : ""}>❌ No adoptado</option>
-            <option value="pendiente" ${mascota.estado === "pendiente" ? "selected" : ""}>⏳ Pendiente</option>
-            <option value="adoptado" ${mascota.estado === "adoptado" ? "selected" : ""}>✅ Adoptado</option>
-          </select>
-          <p class="mensaje-estado">🏠 Este animal aún busca un hogar.</p>
-        </div>
-      </div>
-    `;
-
-    contenedor.appendChild(publicacion);
-    const seleccion = publicacion.querySelector(".estado-seleccion");
-    const mensaje = publicacion.querySelector(".mensaje-estado");
-
-    seleccion.addEventListener("change", () => {
-      const valor = seleccion.value;
-      if (valor === "adoptado") {
-        mensaje.textContent = "🥰 ¡Este animal ya fue adoptado!";
-        mensaje.style.color = "green";
-      } else if (valor === "pendiente") {
-        mensaje.textContent = "⏳ La adopción está pendiente.";
-        mensaje.style.color = "orange";
+  botonesOpcion.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const texto = btn.textContent.toLowerCase();
+      let filtradas;
+      if (texto.includes("perro")) {
+        filtradas = publicaciones.filter(m => m.especie.toLowerCase() === "perro");
+      } else if (texto.includes("gato")) {
+        filtradas = publicaciones.filter(m => m.especie.toLowerCase() === "gato");
       } else {
-        mensaje.textContent = "🏠 Este animal aún busca un hogar.";
-        mensaje.style.color = "red";
+        filtradas = publicaciones.filter(m => m.especie.toLowerCase() === "otro");
       }
+      mostrarPublicaciones(filtradas);
+      ventana.style.display = "none";
     });
-    if (mascota.estado === "no-adoptado") {
-        mensaje.textContent = "🏠 Este animal aún busca un hogar.";
-        mensaje.style.color = "red";
+  });
+
+  document.addEventListener("click", async (e) => {
+
+    if (e.target === modal) {
+      modal.style.display = "none";
+      return;
+    }
+
+    if (modalContenido.contains(e.target)) return;
+
+    if (e.target.classList.contains("nombre-usuario-click")) {
+
+      const userId = e.target.dataset.id;
+      const publicacionId = e.target.dataset.publicacionId;
+
+      const resUser = await fetch(`http://localhost:3000/api/usuarios/${userId}`);
+      const usuario = await resUser.json();
+
+      const pub = publicaciones.find(p => p.publicacion_adopciones_id == publicacionId);
+      const especie = (pub.especie || 'otro').toLowerCase();
+      const img = especie === 'perro' ? '../images/imagen-perro.jpg' : especie === 'gato' ? '../images/imagen-gato.jpg' : '../images/imagen-otro.jpg';
+
+      document.getElementById("modalImgMascota").src = pub.imagen_mascota || img;
+      document.getElementById("modalNombreMascota").textContent = pub.nombre_mascota;
+      document.getElementById("modalRaza").textContent = pub.raza;
+      document.getElementById("modalEdad").textContent = pub.edad + " años";
+      document.getElementById("modalTamano").textContent = pub.tamanio;
+
+      document.getElementById("modalImgUsuario").src = usuario.imagen_usuario || '../images/imagen-usuario.jpg';
+      document.getElementById("modalUsuarioNombre").textContent = usuario.nombre_completo;
+      document.getElementById("modalTelefono").textContent = usuario.telefono;
+      document.getElementById("modalDireccion").textContent = usuario.direccion;
+
+      modal.style.display = "flex";
     }
   });
 
-  contenedor.addEventListener("click", e => {
-    if (e.target.classList.contains("boton-adoptar")) {
-      const id = e.target.getAttribute("data-id");
-      const seleccion = document.querySelector(`.estado-seleccion[data-id="${id}"]`);
-      const mensaje = seleccion.closest(".estado-contenedor").querySelector(".mensaje-estado");
-      const boton = e.target;
-
-      seleccion.value = "pendiente";
-      mensaje.textContent = "⏳ Solicitud de adopción enviada.";
-      mensaje.style.color = "#ff9800";
-
-      boton.textContent = "Pendiente";
-      boton.disabled = true;
-    }
-  });
+  const publicaciones = await obtenerPublicaciones();
+  const solicitudesMapa = await obtenerSolicitudesUsuario();
+  mostrarPublicaciones(publicaciones, solicitudesMapa);
 });

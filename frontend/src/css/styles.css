@@ -249,3 +249,84 @@ footer {
     margin: 20px 0; font-size: 1.1rem;
 }
 
+
+.contenedor-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+}
+.tarjeta-login {
+    background-color: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.titulo-login {
+    color: #ff914d;
+    margin-bottom: 25px;
+    font-size: 2rem;
+}
+
+.campo {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.campo label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.campo input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.campo input:focus {
+    outline: none;
+    border-color: #ff914d;
+    background-color: #fffaf5;
+}
+
+.btn-ingresar {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff914d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-ingresar:hover {
+    background-color: #e07b3b;
+}
+
+.pie-login {
+    margin-top: 20px;
+}
+
+.link-volver {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.7rem;
+}
+
+.link-volver:hover {
+    color: #ff914d;
+    text-decoration: underline;
+}
