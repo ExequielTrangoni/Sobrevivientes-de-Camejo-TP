@@ -13,11 +13,13 @@ const rutasMascotas = require('./routes/mascotas');
 const rutasAdopciones = require('./routes/adopciones');
 const rutasUsuarios = require('./routes/usuarios');
 const rutasPublicaciones = require('./routes/publicaciones');
+const rutaspublicacionesAdopciones = require('./routes/publicaciones_adopciones');
 
 app.use('/api/mascotas', rutasMascotas);
 app.use('/api/adopciones', rutasAdopciones);
 app.use('/api/usuarios', rutasUsuarios);
 app.use('/api/publicaciones', rutasPublicaciones);
+app.use('/api/publicaciones_adopciones', rutaspublicacionesAdopciones);
 
 app.get("/", (req, res) => {
   res.send("Backend anda");
