@@ -22,7 +22,7 @@ formLogin.addEventListener('submit', async (e) => {
             localStorage.setItem('usuarioId', usuario.id);
 
             alert(`¡Bienvenido de nuevo, ${usuario.nombre}!`);
-            window.location.href = '../index.html';
+            window.location.href = './index.html';
         } else {
             const errorData = await respuesta.json();
             alert(errorData.error || 'Email o contraseña incorrectos');
