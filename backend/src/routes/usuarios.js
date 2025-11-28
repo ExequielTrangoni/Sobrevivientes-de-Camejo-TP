@@ -78,5 +78,53 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { nombre, email, contrasenia, telefono, direccion, imagen_usuario } = req.body;
+    try {
+        const resultado = await pool.query(
+            `UPDATE usuarios
+             SET nombre=$1, email=$2, contrasenia=$3, telefono=$4, direccion=$5, imagen_usuario=$6
+             WHERE id=$7 RETURNING *`,
+            [nombre, email, contrasenia, telefono, direccion, imagen_usuario, id]
+        );
+        if (resultado.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
+        res.json(resultado.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/:id/amigos', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const resultado = await pool.query(
+            `SELECT u.id, u.nombre, u.email, u.imagen_usuario
+             FROM amigos a
+             JOIN usuarios u ON a.amigo_id = u.id
+             WHERE a.usuario_id = $1`,
+            [id]
+        );
+        res.json(resultado.rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.delete('/:id/amigos/:amigoId', async (req, res) => {
+    const { id, amigoId } = req.params;
+    try {
+        await pool.query(
+            `DELETE FROM amigos
+             WHERE (usuario_id = $1 AND amigo_id = $2)
+                OR (usuario_id = $2 AND amigo_id = $1)`,
+            [id, amigoId]
+        );
+        res.json({ mensaje: 'Amigo eliminado correctamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 module.exports = router;
