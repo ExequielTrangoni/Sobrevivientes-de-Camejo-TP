@@ -10,9 +10,13 @@ const btnCerrarCrear = document.getElementById('cerrar-modal-publicacion');
 const selectMascota = document.getElementById('select-mascota');
 const formPublicacion = document.getElementById('form-publicacion');
 
+const modalAlerta = document.getElementById('modal-alerta-login');
+
 let todasLasPublicaciones = [];
 let indiceActual = 0;
 const CANTIDAD_POR_TANDA = 6;
+
+// ver publicaciones y comentarios
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -81,6 +85,8 @@ function abrirModal(usuario) {
 quitarModal.addEventListener("click", () => modal.style.display = "none");
 window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
 
+// crear publicacion
+
 btnAbrirCrear.addEventListener('click', async () => {
     modalCrear.style.display = 'flex';
     
@@ -88,16 +94,57 @@ btnAbrirCrear.addEventListener('click', async () => {
         const res = await fetch(`http://localhost:3000/api/mascotas/usuario/${ID_USUARIO}`);
         const mascotas = await res.json();
 
-        selectMascota.innerHTML = '<option value="">Seleccioná una mascota...</option>';
-        mascotas.forEach(m => {
-            const option = document.createElement('option');
-            option.value = m.id;
-            option.textContent = m.nombre;
-            selectMascota.appendChild(option);
-        });
+        if (selectMascota) {
+            selectMascota.innerHTML = '<option value="">Seleccioná una mascota...</option>';
+            mascotas.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m.id;
+                option.textContent = m.nombre;
+                selectMascota.appendChild(option);
+            });
+        }
     } catch (error) {
         console.error("Error cargando mascotas");
     }
 });
 
 btnCerrarCrear.addEventListener('click', () => modalCrear.style.display = 'none');
+
+// modal alerta login
+
+window.cerrarModalLogin = () => {
+    if(modalAlerta) modalAlerta.style.display = 'none';
+}
+
+if (btnAbrirCrear) {
+    btnAbrirCrear.addEventListener('click', async () => {
+        
+        const usuarioLogueado = localStorage.getItem('usuarioId');
+
+        if (!usuarioLogueado) {
+            modalAlerta.style.display = 'flex';
+            return; 
+        }
+
+        if (modalCrear) modalCrear.style.display = 'flex';
+
+        try {
+            const res = await fetch(`http://localhost:3000/api/mascotas/usuario/${usuarioLogueado}`);
+            const mascotas = await res.json();
+    
+            if (selectMascota) {
+                selectMascota.innerHTML = '<option value="">Seleccioná una mascota...</option>';
+                mascotas.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m.id;
+                    option.textContent = m.nombre;
+                    selectMascota.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error("Error cargando mascotas", error);
+        }
+    });
+}
+
+window.addEventListener("click", (e) => { if (modalAlerta && e.target === modalAlerta) modalAlerta.style.display = "none"; });
