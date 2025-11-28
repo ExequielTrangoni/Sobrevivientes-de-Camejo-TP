@@ -27,7 +27,7 @@ router.post('/registro', async (req, res) => {
     res.status(201).json(resultado.rows[0]);
   } catch (error) {
     if (error.code === '23505') {
-      return res.status(400).json({ error: 'El email ya está registrado' });
+      return res.status(400).json({ error: 'El email ya está registrado. Por favor usá otro.' });
     }
     res.status(500).json({ error: error.message });
   }
