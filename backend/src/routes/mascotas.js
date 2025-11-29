@@ -76,4 +76,15 @@ router.delete('/:id', autenticar, async (req, res) => {
   }
 });
 
+router.get('/usuario/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const consulta = 'SELECT * FROM mascotas WHERE duenio_id = $1';
+    const resultado = await pool.query(consulta, [id]);
+    res.json(resultado.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
