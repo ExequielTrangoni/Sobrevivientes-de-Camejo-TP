@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-<<<<<<< HEAD
   let { 
   nombre, 
   especie, 
@@ -22,8 +21,6 @@ router.post('/', async (req, res) => {
   tamanio,
   imagen_mascota, 
   } = req.body;
-=======
-  const { nombre, especie, raza, edad, tamanio, duenio_id } = req.body;
   
   const query = `
     INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, duenio_id)
@@ -31,7 +28,6 @@ router.post('/', async (req, res) => {
     RETURNING *
   `;
   const valores = [nombre, especie, raza, edad, tamanio, duenio_id];
->>>>>>> origin/frontend
 
   if (!nombre || !especie || !edad || !duenio_id) {
     return res.status(400).json({ error: "Campos obligatorios: nombre, especie, edad, duenio_id" });
