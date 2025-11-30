@@ -168,3 +168,19 @@ if (formPublicacion) {
         }
     });
 }
+
+const btnLogout = document.getElementById('btn-logout');
+
+if (btnLogout) {
+    btnLogout.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('usuarioId');
+        alert('Sesión cerrada correctamente 👋');
+        window.location.reload();
+    });
+}
+
+const usuarioLogueado = localStorage.getItem('usuarioId');
+if (!usuarioLogueado && btnLogout) {
+    btnLogout.style.display = 'none';
+}
