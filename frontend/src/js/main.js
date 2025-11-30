@@ -170,6 +170,7 @@ if (formPublicacion) {
 }
 
 const btnLogout = document.getElementById('btn-logout');
+const btnLogin = document.getElementById('btn-login');
 
 if (btnLogout) {
     btnLogout.addEventListener('click', (e) => {
@@ -183,4 +184,8 @@ if (btnLogout) {
 const usuarioLogueado = localStorage.getItem('usuarioId');
 if (!usuarioLogueado && btnLogout) {
     btnLogout.style.display = 'none';
+}
+
+if (usuarioLogueado && btnLogin) {
+    btnLogin.style.display = 'none';
 }
