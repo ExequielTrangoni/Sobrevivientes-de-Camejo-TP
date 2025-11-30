@@ -38,7 +38,7 @@ function cargarMasPublicaciones() {
         const div = document.createElement("div");
         div.className = "publicacion";
 
-        const imagenSrc = pub.imagen_publicacion ? `http://localhost:3000/uploads/${pub.imagen_publicacion}` : "../images/publicacion-ejemplo.webp";
+        const imagenSrc = `http://localhost:3000/uploads/${pub.imagen_publicacion}`
 
         div.innerHTML = `
             <div class="publicacion-header">
@@ -47,7 +47,7 @@ function cargarMasPublicaciones() {
                     ${new Date(pub.fecha_publicacion).toLocaleDateString()}
                 </span>
             </div>
-            <img src="${imagenSrc}" alt="Publicación" style="max-width: 100%; height: auto;">
+            <img src="${imagenSrc}" onerror="this.onerror=null;this.src='/src/images/publicacion-ejemplo.jpg';" alt="Publicación" style="max-width: 100%; height: auto;">
             <div class="publicacion-descripcion">
                 <strong>${pub.titulo}</strong><br>
                 ${pub.descripcion}
