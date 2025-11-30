@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
       FROM publicaciones p
       JOIN mascotas m ON p.mascota_id = m.id
       JOIN usuarios u ON m.duenio_id = u.id
-      ORDER BY p.fecha_publicacion DESC
+      ORDER BY p.id DESC
     `;
     
     const resultado = await pool.query(query);
