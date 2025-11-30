@@ -38,7 +38,7 @@ function cargarMasPublicaciones() {
         const div = document.createElement("div");
         div.className = "publicacion";
 
-        const imagenSrc = "../images/publicacion-ejemplo.webp"; 
+        const imagenSrc = pub.imagen_publicacion ? `http://localhost:3000/uploads/${pub.imagen_publicacion}` : "../images/publicacion-ejemplo.webp";
 
         div.innerHTML = `
             <div class="publicacion-header">
@@ -47,7 +47,7 @@ function cargarMasPublicaciones() {
                     ${new Date(pub.fecha_publicacion).toLocaleDateString()}
                 </span>
             </div>
-            <img src="${imagenSrc}" alt="Publicación">
+            <img src="${imagenSrc}" alt="Publicación" style="max-width: 100%; height: auto;">
             <div class="publicacion-descripcion">
                 <strong>${pub.titulo}</strong><br>
                 ${pub.descripcion}
@@ -138,23 +138,22 @@ if (formPublicacion) {
     formPublicacion.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const nuevaPublicacion = {
-            titulo: document.getElementById('input-titulo').value,
-            descripcion: document.getElementById('input-desc').value,
-            ubicacion: document.getElementById('input-ubicacion').value,
-            mascota_id: selectMascota.value
-        };
+        const fileInput = document.getElementById('input-imagen');
+        const formData = new FormData();
 
-        if (!nuevaPublicacion.mascota_id) {
-            alert("Por favor elegí una mascota");
-            return;
+        formData.append('titulo', document.getElementById('input-titulo').value);
+        formData.append('descripcion', document.getElementById('input-desc').value);
+        formData.append('ubicacion', document.getElementById('input-ubicacion').value);
+        formData.append('mascota_id', selectMascota.value);
+        
+        if (fileInput.files.length > 0) {
+            formData.append('imagen_publicacion', fileInput.files[0]);
         }
 
         try {
             const res = await fetch('http://localhost:3000/api/publicaciones', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(nuevaPublicacion)
+                body: formData 
             });
 
             if (res.ok) {
