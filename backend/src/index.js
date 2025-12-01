@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use('/api/mascotas', rutasMascotas);
 app.use('/api/adopciones', rutasAdopciones);
 app.use('/api/usuarios', rutasUsuarios);
 app.use('/api/publicaciones', rutasPublicaciones);
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.get("/", (req, res) => {
   res.send("Backend anda");

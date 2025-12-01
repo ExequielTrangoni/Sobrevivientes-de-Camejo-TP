@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-<<<<<<< HEAD
   let { 
   nombre, 
   especie, 
@@ -22,8 +21,6 @@ router.post('/', async (req, res) => {
   tamanio,
   imagen_mascota, 
   } = req.body;
-=======
-  const { nombre, especie, raza, edad, tamanio, duenio_id } = req.body;
   
   const query = `
     INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, duenio_id)
@@ -31,7 +28,6 @@ router.post('/', async (req, res) => {
     RETURNING *
   `;
   const valores = [nombre, especie, raza, edad, tamanio, duenio_id];
->>>>>>> origin/frontend
 
   if (!nombre || !especie || !edad || !duenio_id) {
     return res.status(400).json({ error: "Campos obligatorios: nombre, especie, edad, duenio_id" });
@@ -77,6 +73,17 @@ router.delete('/:id', autenticar, async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/usuario/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const consulta = 'SELECT * FROM mascotas WHERE duenio_id = $1';
+    const resultado = await pool.query(consulta, [id]);
+    res.json(resultado.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
