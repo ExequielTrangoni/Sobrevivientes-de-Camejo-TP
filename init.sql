@@ -23,7 +23,7 @@ CREATE TABLE mascotas (
     raza VARCHAR(50) DEFAULT 'no-tiene',
     tamanio VARCHAR(40),
     imagen_mascota varchar(250),
-    duenio_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    duenio_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
 CREATE TABLE publicaciones (
@@ -34,6 +34,14 @@ CREATE TABLE publicaciones (
     fecha_publicacion DATE DEFAULT CURRENT_DATE,
     ubicacion VARCHAR(100) NOT NULL,
     mascota_id INT NOT NULL REFERENCES mascotas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE amigos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    amigo_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    estado VARCHAR(20) DEFAULT 'pendiente',
+    fecha TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE publicaciones_adopciones (
@@ -65,10 +73,4 @@ CREATE TABLE comentarios (
     cantidad_likes INTEGER DEFAULT 0,
     publicacion_id INTEGER REFERENCES publicaciones(id) ON DELETE CASCADE,
     usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE
-);
-
-CREATE TABLE amigos (
-    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
-    amigo_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
-    PRIMARY KEY (usuario_id, amigo_id)
 );
