@@ -23,37 +23,58 @@ const botonCerrarEditar = document.getElementById("cerrarModal");
 const formPerfil = document.getElementById("formPerfil");
 const formMascota = document.getElementById("formMascota");
 const botonAbrirFormMascota = document.getElementById("botonAbrirFormMascota");
-const formMascotaContainer = document.getElementById("formMascotaContainer");
+const modalMascota = document.getElementById("modalMascota");
 const cerrarFormMascota = document.getElementById("cerrarFormMascota");
+const modalPublicacion = document.getElementById('modalPublicacion');
+const cerrarFormPublicacion = document.getElementById('cerrarFormPublicacion');
+const botonAbrirPublicacion = document.getElementById('botonAbrirFormPublicacion');
+const formPublicacion = document.getElementById('formPublicacion');
+const selectMascota = document.getElementById('pubMascota');
 
 const params = new URLSearchParams(window.location.search);
 const perfilId = params.get("usuarioId");
 const mostrarId = perfilId || getUsuarioId();
 
-document.addEventListener("DOMContentLoaded",async () => {
-    const modalLogin = document.getElementById("modalLogin");
-    const botonIrLogin = document.getElementById("botonIrLogin");
-    if (!getUsuarioId()) {
-        modalLogin.style.display = "flex";
+document.addEventListener("DOMContentLoaded", async () => {
+    const seccionBienvenida = document.querySelector(".seccionBienvenida");
+    const mainPerfil = document.querySelector("main.usuarioPerfil");
+    const usuarioId = getUsuarioId();
 
-        botonIrLogin.addEventListener("click", () => {
-            window.location.href = './login.html';
-        });
-
-        window.addEventListener("click", (e) => {
-            if (e.target === modalLogin) window.location.href = './login.html';
-        });
-    }else {
-        await initPerfil();
+    if (!usuarioId) {
+        seccionBienvenida.style.display = "block";
+        mainPerfil.style.display = "none";
+        return;
     }
+
+    seccionBienvenida.style.display = "none";
+    mainPerfil.style.display = "";
+    await initPerfil();
+});
+
+botonAbrirPublicacion.addEventListener('click', () => {
+    modalPublicacion.style.display = 'flex';
+    selectMascota.innerHTML = '';
+    mascotas.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = m.nombre;
+        selectMascota.appendChild(opt);
+    });
+});
+
+cerrarFormPublicacion.addEventListener('click', () => {
+    modalPublicacion.style.display = 'none'
+});
+window.addEventListener('click', e => {
+    if(e.target === modalPublicacion) modalPublicacion.style.display = 'none';
 });
 
 botonAbrirFormMascota.addEventListener('click', () => {
-    formMascotaContainer.style.display = 'flex';
+    modalMascota.style.display = 'flex';
 });
 
 cerrarFormMascota.addEventListener('click', () => {
-    formMascotaContainer.style.display = 'none';
+    modalMascota.style.display = 'none';
 });
 
 function getUsuarioId() {
@@ -104,89 +125,22 @@ async function cargarPerfil() {
             headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         });
         usuario = await res.json();
-        const contenedor = document.getElementById("zonaSolicitudesPerfil");
         const esPerfilPropio = mostrarId == getUsuarioId();
-        renderPerfil();
+        renderPerfil(esPerfilPropio);
 
-        if (!esPerfilPropio){
-            document.getElementById("botonEditarPerfil").style.display = "none";
+        document.getElementById("botonEditarPerfil").style.display = esPerfilPropio ? 'block' : 'none';
+        document.querySelectorAll('#formPerfil input').forEach(input => input.disabled = !esPerfilPropio);
 
-            const inputs = document.querySelectorAll('#formPerfil input');
-            inputs.forEach(input => input.disabled = true);
+        const botonAmigo = document.getElementById("botonAgregarAmigo");
+        botonAmigo.style.display = esPerfilPropio ? 'none' : 'block';
 
-            const boton = document.getElementById("botonAgregarAmigo");
+        if(botonAbrirFormMascota) botonAbrirFormMascota.style.display = esPerfilPropio ? 'block' : 'none';
+        if(formMascota) formMascota.style.display = esPerfilPropio ? 'block' : 'none';
+
+        if (!esPerfilPropio) {
             const estado = await obtenerEstadoAmistad();
-
-            if (estado === "amigos") {
-                boton.style.display = "none";
-            }
-            else if (estado === "pendiente-enviada") {
-                boton.style.display = "block";
-                boton.textContent = "Solicitud enviada";
-                boton.disabled = true;
-            }
-            else if (estado === "pendiente-recibida") {
-                boton.style.display = "none";
-                contenedor.innerHTML = `
-                    <button class="boton boton-secundario" id="botonAceptarPerfil">Aceptar solicitud</button>
-                    <button class="boton boton-eliminar" id="botonRechazarPerfil">Rechazar solicitud</button>
-                `;
-                const botonAceptar = document.getElementById("botonAceptarPerfil");
-                const botonRechazar = document.getElementById("botonRechazarPerfil");
-
-                botonAceptar.onclick = async () => {
-                    await aceptarSolicitud(mostrarId);
-                    botonAceptar.style.display = "none";
-                    botonRechazar.style.display = "none";
-                };
-
-                botonRechazar.onclick = async () => {
-                    await rechazarSolicitud(mostrarId);
-                    botonAceptar.style.display = "none";
-                    botonRechazar.style.display = "none";
-                    boton.style.display = "block";
-                    boton.textContent = "Agregar amigo";
-                    boton.disabled = false;
-                };
-            }
-            else if (estado === "ninguna") {
-                boton.style.display = "block";
-                boton.textContent = "Agregar amigo";
-                boton.disabled = false;
-
-                boton.onclick = async () => {
-                    boton.disabled = true;
-                    boton.textContent = "Enviando...";
-
-                    const res = await fetch(`${API_USUARIO}/enviar`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: "Bearer " + localStorage.getItem('token')
-                        },
-                        body: JSON.stringify({
-                            usuarioId: getUsuarioId(),
-                            amigoId: mostrarId
-                        })
-                    });
-
-                    if (res.ok) {
-                        boton.textContent = "Solicitud enviada";
-                    } else {
-                        boton.textContent = "Agregar amigo";
-                        boton.disabled = false;
-                    }
-                };
-            }
-        } else {
-            document.getElementById("botonAgregarAmigo").style.display = "none";
-
-            const inputs = document.querySelectorAll('#formPerfil input');
-            inputs.forEach(input => input.disabled = false);
-
-            document.getElementById("botonEditarPerfil").style.display = "block";
+            manejarBotonAmistad(botonAmigo, estado);
         }
-
     } catch (err) {
         console.error('Error al cargar perfil:', err);
     }
@@ -213,13 +167,75 @@ function renderPerfil() {
     document.getElementById("biografia").textContent = `Biografía: ${usuario.biografia || ''}`;
 }
 
+function manejarBotonAmistad(boton, estado) {
+    const contenedor = document.getElementById("zonaSolicitudesPerfil");
+    contenedor.innerHTML = '';
+
+    switch(estado) {
+        case "amigos":
+            boton.style.display = "none";
+            break;
+        case "pendiente-enviada":
+            boton.style.display = "block";
+            boton.textContent = "Solicitud enviada";
+            boton.disabled = true;
+            break;
+        case "pendiente-recibida":
+            boton.style.display = "none";
+            contenedor.innerHTML = `
+                <button class="boton botonSecundario" id="botonAceptarPerfil">Aceptar solicitud</button>
+                <button class="boton botonEliminar" id="botonRechazarPerfil">Rechazar solicitud</button>
+            `;
+            document.getElementById("botonAceptarPerfil").onclick = async () => {
+                await aceptarSolicitud(mostrarId);
+                contenedor.innerHTML = '';
+            };
+            document.getElementById("botonRechazarPerfil").onclick = async () => {
+                await rechazarSolicitud(mostrarId);
+                boton.style.display = "block";
+                boton.textContent = "Agregar amigo";
+                boton.disabled = false;
+                contenedor.innerHTML = '';
+            };
+            break;
+        case "ninguna":
+            boton.style.display = "block";
+            boton.textContent = "Agregar amigo";
+            boton.disabled = false;
+            boton.onclick = async () => {
+                boton.disabled = true;
+                boton.textContent = "Enviando...";
+                const res = await fetch(`${API_USUARIO}/enviar`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify({ usuarioId: getUsuarioId(), amigoId: mostrarId })
+                });
+
+                if (!res.ok) {
+                    alert("Error al enviar la solicitud");
+                    boton.disabled = false;
+                    boton.textContent = "Agregar amigo";
+                    return;
+                }
+                const estado = await obtenerEstadoAmistad();
+                manejarBotonAmistad(boton, estado);
+
+                await cargarSolicitudes();
+                await cargarAmigos();
+            };
+            break;
+    }
+}
+
 async function cargarAmigos() {
     try {
         const res = await fetch(`${API_USUARIO}/${mostrarId}/amigos`, {
             headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         });
         amigos = await res.json();
-
         renderAmigos();
     } catch (err) {
         console.error('Error al cargar amigos:', err);
@@ -228,28 +244,23 @@ async function cargarAmigos() {
 
 function renderAmigos() {
     listaAmigos.innerHTML = '';
+    const esPerfilPropio = mostrarId == getUsuarioId();
 
     if (!amigos.length) {
-        return listaAmigos.innerHTML = '<p>No tienes amigos</p>';
+        return listaAmigos.innerHTML = `<p>${esPerfilPropio ? 'No tienes amigos' : 'No hay amigos'}</p>`;
     }
-
-    const esPerfilPropio = mostrarId == getUsuarioId();
 
     amigos.forEach(amigo => {
         const div = document.createElement('div');
         div.className = 'tarjeta amigoItem';
-
         div.innerHTML = `
             <img class="imgRedonda" src="${amigo.imagen_usuario || '../images/gato-1.jpg'}" alt="${amigo.nombre}">
-                <h4 class="textoCompacto">
-                    ${linkPerfil(amigo.id, amigo.nombre)}
-                </h4>
-            ${esPerfilPropio ? '<button class="boton boton-eliminar">🗑</button>' : ''}
+            <h4 class="textoCompacto">${linkPerfil(amigo.id, amigo.nombre)}</h4>
+            ${esPerfilPropio ? '<button class="boton botonEliminar">🗑</button>' : ''}
         `;
-
         if (esPerfilPropio) {
-            div.querySelector('.boton-eliminar').addEventListener('click', async () => {
-                if (!confirm("¿Seguro que deseas eliminar a este amigo?")) return;
+            div.querySelector('.botonEliminar').addEventListener('click', async () => {
+                if(!confirm("¿Seguro que deseas eliminar a este amigo?")) return;
                 await fetch(`${API_USUARIO}/${getUsuarioId()}/amigos/${amigo.id}`, {
                     method: 'DELETE',
                     headers: { Authorization: "Bearer " + localStorage.getItem('token') }
@@ -269,12 +280,6 @@ async function cargarMascotas() {
             headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         });
         mascotas = await res.json();
-
-        const esPerfilPropio = mostrarId == getUsuarioId();
-
-        if(botonAbrirFormMascota) botonAbrirFormMascota.style.display = esPerfilPropio ? 'block' : 'none';
-        if(formMascota) formMascota.style.display = esPerfilPropio ? 'block' : 'none';
-        document.getElementById("totalMascotas").textContent = mascotas.length;
         renderMascotas();
     } catch (err) {
         console.error('Error al cargar mascotas:', err);
@@ -285,9 +290,8 @@ function renderMascotas() {
     galeriaMascotas.innerHTML = '';
     const esPerfilPropio = mostrarId == getUsuarioId();
 
-    if (mascotas.length === 0) {
-        galeriaMascotas.innerHTML = '<p>No tienes mascotas</p>';
-        return;
+    if (!mascotas.length) {
+        return galeriaMascotas.innerHTML = `<p>${esPerfilPropio ? 'No tienes mascotas' : 'No hay mascotas'}</p>`;
     }
 
     mascotas.forEach(m => {
@@ -296,11 +300,10 @@ function renderMascotas() {
         div.innerHTML = `
             <img class="imgRedonda" src="${m.imagen_mascota || '../images/perro-1.jpg'}" alt="${m.nombre}">
             <p class="textoCompacto">${m.nombre}</p>
-            ${esPerfilPropio ? '<button class="boton boton-eliminar">🗑</button>' : ''}
+            ${esPerfilPropio ? '<button class="boton botonEliminar">🗑</button>' : ''}
         `;
-
         if (esPerfilPropio) {
-            div.querySelector('.boton-eliminar').addEventListener('click', async () => {
+            div.querySelector('.botonEliminar').addEventListener('click', async () => {
                 if (!confirm("¿Seguro que deseas eliminar esta mascota?")) return;
                 await fetch(`${API_MASCOTAS}/${m.id}`, {
                     method: 'DELETE',
@@ -312,6 +315,7 @@ function renderMascotas() {
         }
         galeriaMascotas.appendChild(div);
     });
+    actualizarTotales();
 }
 
 async function cargarPublicaciones() {
@@ -320,7 +324,6 @@ async function cargarPublicaciones() {
             headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         });
         publicaciones = await res.json();
-
         renderPublicaciones();
     } catch (err) {
         console.error('Error al cargar publicaciones.', err);
@@ -329,27 +332,87 @@ async function cargarPublicaciones() {
 
 function renderPublicaciones() {
     galeriaPublicaciones.innerHTML = '';
-    if (!publicaciones.length) return galeriaPublicaciones.innerHTML = '<p>No tienes publicaciones</p>';
+    const esPerfilPropio = mostrarId == getUsuarioId();
 
+    const botonAgregar = document.getElementById('botonAbrirFormPublicacion');
+    if (botonAgregar) botonAgregar.style.display = esPerfilPropio ? 'block' : 'none';
+
+    if (!publicaciones || publicaciones.length === 0) {
+        return galeriaPublicaciones.innerHTML = `<p>${esPerfilPropio ? 'No tienes publicaciones' : 'No hay publicaciones'}</p>`;
+    }
     publicaciones.forEach(p => {
+        const fecha = new Date(p.fecha_publicacion).toLocaleDateString("es-AR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+
         const div = document.createElement('div');
         div.className = 'publicacion';
         div.innerHTML = `
-            <button class="boton boton-eliminar">🗑</button>
+            ${esPerfilPropio ? '<button class="boton botonEliminar">🗑</button>' : ''}
             <img src="${p.imagen_publicacion || '../images/publicacion-ejemplo.webp'}" alt="Publicación">
-            <p>${p.descripcion || p.titulo}</p>
+            <h4>${p.titulo}</h4>
+            <p>${p.descripcion}</p>
+            <small>Ubicación: ${p.ubicacion}</small>
+            <small>Fecha: ${fecha}</small>
         `;
-        div.querySelector('.boton-eliminar').addEventListener('click', async () => {
-            await fetch(`${API_PUBLICACIONES}/${p.id}`, {
-                method: 'DELETE',
-                headers: { Authorization: "Bearer " + localStorage.getItem('token')}
+
+        if (esPerfilPropio) {
+            div.querySelector('.botonEliminar').addEventListener('click', async () => {
+                if(!confirm('¿Eliminar publicación?')) return;
+                await fetch(`${API_PUBLICACIONES}/${p.id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+                });
+                await cargarPublicaciones();
+                actualizarTotales();
             });
-            await cargarPublicaciones();
-            actualizarTotales();
-        });
+        }
         galeriaPublicaciones.appendChild(div);
     });
+    actualizarTotales();
 }
+
+
+formPublicacion.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const datos = {
+        titulo: document.getElementById('pubTitulo').value,
+        descripcion: document.getElementById('pubDescripcion').value,
+        imagen_publicacion: document.getElementById('pubImagen').value || null,
+        ubicacion: document.getElementById('pubUbicacion').value,
+        mascota_id: parseInt(document.getElementById('pubMascota').value)
+    };
+
+    try {
+        const res = await fetch(API_PUBLICACIONES, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (!res.ok) {
+            const error = await res.text();
+            console.error('Error al agregar publicacion:', error);
+            alert('Error al agregar publicacion');
+            return;
+        }
+
+        await cargarPublicaciones();
+        actualizarTotales();
+        formPublicacion.reset();
+        modalPublicacion.style.display = 'none';
+    } catch (err) {
+        console.error(err);
+        alert('No se pudo agregar la publicación');
+    }
+});
+
 
 botonEditar.addEventListener('click', () => {
     document.getElementById("inputNombre").value = usuario.nombre || '';
@@ -364,8 +427,13 @@ botonEditar.addEventListener('click', () => {
     modalEditar.style.display = 'flex';
 });
 
-botonCerrarEditar.addEventListener('click', () => modalEditar.style.display = 'none');
-window.addEventListener('click', e => { if (e.target === modalEditar) modalEditar.style.display = 'none'; });
+botonCerrarEditar.addEventListener('click', () => {
+    modalEditar.style.display = 'none'
+});
+
+window.addEventListener('click', e => {
+    if (e.target === modalEditar) modalEditar.style.display = 'none';
+});
 
 formPerfil.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -408,7 +476,7 @@ async function cargarSolicitudes() {
         const usuario = JSON.parse(localStorage.getItem('usuario'));
 
         const esPerfilPropio = mostrarId == getUsuarioId();
-        const contenedorSolicitudes = document.getElementById("solicitudes-container");
+        const contenedorSolicitudes = document.getElementById("solicitudesContainer");
 
         contenedorSolicitudes.style.display = esPerfilPropio ? "block" : "none";
 
@@ -432,7 +500,7 @@ function renderSolicitudes() {
     lista.innerHTML = '';
 
     if (!solicitudes.length) {
-        lista.innerHTML = '<p>No hay solicitudes pendientes</p>';
+        lista.innerHTML = '<p>No tienes solicitudes de amistad</p>';
     } else {
         solicitudes.forEach(solicitud => {
             const li = document.createElement('li');
@@ -444,8 +512,8 @@ function renderSolicitudes() {
                 </h4>
 
                 <div>
-                    <button class="boton boton-secundario aceptarBoton">Aceptar</button>
-                    <button class="boton boton-eliminar rechazarBoton">Rechazar</button>
+                    <button class="boton botonSecundario aceptarBoton">Aceptar</button>
+                    <button class="boton botonEliminar rechazarBoton">Rechazar</button>
                 </div>
             `;
 
@@ -492,6 +560,12 @@ async function aceptarSolicitud(remitenteId) {
 
         await cargarSolicitudes();
         await cargarAmigos();
+
+        const boton = document.getElementById("botonAgregarAmigo");
+        if (boton) {
+            const estado = await obtenerEstadoAmistad();
+            manejarBotonAmistad(boton, estado);
+        }
     } catch (err) {
         console.error('Error aceptar solicitud:', err);
     }
@@ -514,6 +588,13 @@ async function rechazarSolicitud(remitenteId) {
             return;
         }
         await cargarSolicitudes();
+        await cargarAmigos();
+
+        const boton = document.getElementById("botonAgregarAmigo");
+        if (boton) {
+            const estado = await obtenerEstadoAmistad();
+            manejarBotonAmistad(boton, estado);
+        }
     } catch (err) {
         console.error('Error rechazar solicitud:', err);
     }
@@ -553,7 +634,7 @@ formMascota.addEventListener('submit', async (e) => {
         await cargarMascotas();
         actualizarTotales();
         formMascota.reset();
-        formMascotaContainer.style.display = 'none';
+        modalMascota.style.display = 'none';
 
     } catch (err) {
         console.error("Error al agregar mascota:", err);
