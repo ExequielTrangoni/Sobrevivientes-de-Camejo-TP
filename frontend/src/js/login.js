@@ -17,11 +17,12 @@ formLogin.addEventListener('submit', async (e) => {
         });
 
         if (respuesta.ok) {
-            const usuario = await respuesta.json();
+            const data = await respuesta.json();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('usuario', JSON.stringify(data.usuario));
+            localStorage.setItem('usuarioId', data.usuario.id);
 
-            localStorage.setItem('usuarioId', usuario.id);
-
-            alert(`¡Bienvenido de nuevo, ${usuario.nombre}!`);
+            alert(`¡Bienvenido de nuevo, ${data.usuario.nombre}!`);
             window.location.href = './index.html';
         } else {
             const errorData = await respuesta.json();
