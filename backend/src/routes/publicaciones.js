@@ -3,9 +3,10 @@ const router = express.Router();
 const pool = require('../db');
 
 router.get('/', async (req, res) => {
+    const { usuario_id } = req.query;
   try {
-    const query = `
-      SELECT 
+    let query = `
+      SELECT
         p.id, p.titulo, p.descripcion, p.fecha_publicacion, p.ubicacion,
         m.nombre AS nombre_mascota,
         m.especie,
@@ -13,15 +14,20 @@ router.get('/', async (req, res) => {
       FROM publicaciones p
       JOIN mascotas m ON p.mascota_id = m.id
       JOIN usuarios u ON m.duenio_id = u.id
-      ORDER BY p.fecha_publicacion DESC
     `;
-    
-    const resultado = await pool.query(query);
+    const valores = [];
+
+    if (usuario_id) {
+        query += ' WHERE u.id = $1';
+        valores.push(usuario_id);
+    }
+
+    query += ' ORDER BY p.id DESC';
+    const resultado = await pool.query(query,valores);
     res.json(resultado.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-
 });
 
 router.post('/', async (req, res) => {
