@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const autenticar = require('../middlewares/autor');
+const jwt = require('jsonwebtoken');
 
-router.get('/', async (req, res) => {
+router.get('/', autenticar, async (req, res) => {
   try {
     const resultado = await pool.query('SELECT * FROM usuarios');
     res.json(resultado.rows);
@@ -24,7 +26,13 @@ router.post('/registro', async (req, res) => {
 
   try {
     const resultado = await pool.query(query, valores);
-    res.status(201).json(resultado.rows[0]);
+    const usuario = resultado.rows[0];
+    const token = jwt.sign(
+        { id: usuario.id, nombre: usuario.nombre },
+        process.env.JWT_SECRET || 'contra-super-segura',
+        { expiresIn: '1h' }
+    );
+    res.json({ token, usuario });
   } catch (error) {
     if (error.code === '23505') {
       return res.status(400).json({ error: 'El email ya está registrado. Por favor usá otro.' });
@@ -33,76 +41,86 @@ router.post('/registro', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    await pool.query('DELETE FROM usuarios WHERE id = $1', [id]);
-    res.json({ mensaje: 'Usuario eliminado correctamente' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const query = 'SELECT * FROM usuarios WHERE id = $1';
-    const resultado = await pool.query(query, [id]);
-
-    if (resultado.rows.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    res.json(resultado.rows[0]);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 router.post('/login', async (req, res) => {
-  const { email, contrasenia } = req.body;
+    const { email, contrasenia } = req.body;
 
-  try {
-    const query = 'SELECT * FROM usuarios WHERE email = $1 AND contrasenia = $2';
-    const valores = [email, contrasenia];
-    
-    const resultado = await pool.query(query, valores);
-
-    if (resultado.rows.length > 0) {
-      res.json(resultado.rows[0]);
-    } else {
-      res.status(401).json({ error: 'Email o contraseña incorrectos' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.put('/:id', async (req, res) => {
-    const { id } = req.params;
-    const { nombre, email, contrasenia, telefono, direccion, imagen_usuario } = req.body;
     try {
-        const resultado = await pool.query(
-            `UPDATE usuarios
-             SET nombre=$1, email=$2, contrasenia=$3, telefono=$4, direccion=$5, imagen_usuario=$6
-             WHERE id=$7 RETURNING *`,
-            [nombre, email, contrasenia, telefono, direccion, imagen_usuario, id]
-        );
-        if (resultado.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
-        res.json(resultado.rows[0]);
+        const query = 'SELECT * FROM usuarios WHERE email = $1 AND contrasenia = $2';
+        const valores = [email.trim(), contrasenia.trim()];
+
+        const resultado = await pool.query(query, valores);
+
+        if (resultado.rows.length > 0) {
+            const usuario = resultado.rows[0];
+            const token = jwt.sign(
+                { id: usuario.id, nombre: usuario.nombre },
+                process.env.JWT_SECRET || 'contra-super-segura',
+                { expiresIn: '1h' }
+            );
+            res.json({ token, usuario });
+        } else {
+            res.status(401).json({ error: 'Email o contraseña incorrectos' });
+        }
     } catch (error) {
+        console.error('Error en login:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-router.get('/:id/amigos', async (req, res) => {
+router.post('/enviar', autenticar, async (req, res) => {
+    const usuarioId = req.user.id;
+    const {amigoId} = req.body;
+
+    if(usuarioId === amigoId) {
+        return res.status(400).json({ error: 'No puedes agregarte a ti mismo' });
+    }
+
+    try{
+        const existe = await pool.query(
+            'SELECT * FROM amigos WHERE usuario_id = $1 AND amigo_id = $2',
+            [usuarioId,amigoId]
+        );
+        if(existe.rows.length > 0){
+            return res.status(409).json({ error: 'Solicitud ya enviada' });
+        }
+        await pool.query(
+            'INSERT INTO amigos (usuario_id, amigo_id,estado) VALUES ($1,$2,$3)',
+            [usuarioId,amigoId,'pendiente']
+        );
+        res.json({mensaje:"Solicitud enviada"});
+    }catch(error){
+        res.status(500).json({ error: error.message });
+    }
+})
+
+router.post('/aceptar',autenticar, async (req, res) => {
+    const usuarioId = req.user.id;
+    const{amigoId} = req.body;
+
+    try {
+        const resultado = await pool.query(
+            "UPDATE amigos SET estado = $1 WHERE usuario_id = $2 AND amigo_id = $3 RETURNING *",
+            ['aceptado', amigoId, usuarioId]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({error: 'Solicitud no encontrada'});
+        }
+        res.json({mensaje:"Solicitud aceptada"});
+    }catch(error){
+        res.status(500).json({ error: error.message });
+    }
+})
+
+router.get('/:id/amigos',autenticar, async (req, res) => {
     const { id } = req.params;
     try {
         const resultado = await pool.query(
             `SELECT u.id, u.nombre, u.email, u.imagen_usuario
              FROM amigos a
-             JOIN usuarios u ON a.amigo_id = u.id
-             WHERE a.usuario_id = $1`,
+             JOIN usuarios u ON (u.id = a.amigo_id AND a.usuario_id =$1)
+             OR (u.id = a.usuario_id AND a.amigo_id =$1)
+             WHERE a.estado = 'aceptado'`,
             [id]
         );
         res.json(resultado.rows);
@@ -111,14 +129,30 @@ router.get('/:id/amigos', async (req, res) => {
     }
 });
 
-router.delete('/:id/amigos/:amigoId', async (req, res) => {
-    const { id, amigoId } = req.params;
+router.get('/:id/amigos-pendientes',autenticar, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const resultado = await pool.query(
+            `SELECT u.id, u.nombre, u.email
+             FROM amigos a JOIN usuarios u ON u.id = a.usuario_id
+             WHERE a.amigo_id = $1 AND a.estado = 'pendiente'`,
+            [id]
+        );
+        res.json(resultado.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.delete('/:id/amigos/:amigoId',autenticar, async (req, res) => {
+    const usuarioId = req.user.id;
+    const { amigoId } = req.params;
     try {
         await pool.query(
             `DELETE FROM amigos
              WHERE (usuario_id = $1 AND amigo_id = $2)
                 OR (usuario_id = $2 AND amigo_id = $1)`,
-            [id, amigoId]
+            [usuarioId, amigoId]
         );
         res.json({ mensaje: 'Amigo eliminado correctamente' });
     } catch (error) {
@@ -126,5 +160,77 @@ router.delete('/:id/amigos/:amigoId', async (req, res) => {
     }
 });
 
+router.put('/:id',autenticar, async (req, res) => {
+    const { id } = req.params;
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID inválido, debe ser un número' });
+    }
+
+    const { nombre, nickname, email, contrasenia, telefono, direccion, imagen_usuario,
+        nacimiento, ciudad, biografia } = req.body;
+
+    try {
+        const resultado = await pool.query(
+            `UPDATE usuarios
+             SET nombre=$1, nickname=$2, email=$3, contrasenia=$4, imagen_usuario=$5,
+                 telefono=$6, direccion=$7, nacimiento=$8, ciudad=$9, biografia=$10
+             WHERE id=$11 RETURNING *`,
+            [
+                nombre,
+                nickname,
+                email,
+                contrasenia,
+                imagen_usuario,
+                telefono,
+                direccion,
+                nacimiento,
+                ciudad,
+                biografia,
+                id
+            ]
+        );
+
+        if (resultado.rows.length === 0)
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+
+        res.json(resultado.rows[0]);
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+router.get('/:id',autenticar, async (req, res) => {
+    const { id } = req.params;
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID inválido, debe ser un número' });
+    }
+    try {
+        const query = 'SELECT * FROM usuarios WHERE id = $1';
+        const resultado = await pool.query(query, [id]);
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        res.json(resultado.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.delete('/:id',autenticar, async (req, res) => {
+    const { id } = req.params;
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: 'ID inválido, debe ser un número' });
+    }
+    try {
+        await pool.query('DELETE FROM usuarios WHERE id = $1', [id]);
+        res.json({ mensaje: 'Usuario eliminado correctamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;
