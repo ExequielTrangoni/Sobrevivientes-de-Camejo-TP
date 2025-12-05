@@ -21,15 +21,21 @@
     <main class="usuarioPerfil">
         <section class="perfil">
             <img id="fotoPerfil" src="" alt="Foto de perfil" class="fotoPerfil">
+            <div id="accionesPerfil">
+                <button id="botonAgregarAmigo" class="boton boton-principal">Agregar Amigo</button>
+            </div>
+            <div id="zonaSolicitudesPerfil"></div>
             <h2>Mi Perfil</h2>
             <p id="nombre"></p>
             <p id="nickname"></p>
             <p id="contrasenia"></p>
+            <p id="telefono"></p>
+            <p id="direccion"></p>
             <p id="email"></p>
             <p id="nacimiento"></p>
             <p id="ciudad"></p>
             <p id="biografia"></p>
-            <button id="botonEditarPerfil">Editar Perfil</button>
+            <button id="botonEditarPerfil" class="boton boton-secundario">Editar Perfil</button>
         </section>
 
         <section class="publicaciones">
@@ -38,65 +44,115 @@
         </section>
 
         <div class="sidebar">
+            <div id="solicitudes-container">
+                <h3>Solicitudes pendientes (<span id="totalSolicitudes">0</span>)</h3>
+                <ul id="listaSolicitudes"></ul>
+            </div>
+
             <section class="amigos">
                 <h3>Amigos (<span id="totalAmigos">0</span>)</h3>
-                <ul id="listaAmigos"></ul>
+                <div id="listaAmigos" class="galeria-amigos"></div>
             </section>
 
             <section class="mascotas">
                 <h3>Mascotas (<span id="totalMascotas">0</span>)</h3>
                 <div id="galeriaMascotas"></div>
 
-                <form id="formMascota" class="formAgregar">
-                    <label for="nombreMascota"></label>
-                    <input type="text" id="nombreMascota" placeholder="Nombre de la mascota" required>
-                    <button type="submit">Agregar Mascota</button>
-                </form>
+                <button id="botonAbrirFormMascota" class="boton boton-secundario">Agregar Mascota</button>
+
             </section>
         </div>
     </main>
+
+    <div id="formMascotaContainer" class="modal" style="display:none;">
+        <div class="contenidoModal">
+            <span class="cerrar" id="cerrarFormMascota">&times;</span>
+            <h3>Agregar Mascota</h3>
+            <form id="formMascota">
+                <div class="form">
+                    <label for="mascotaNombre">Nombre:</label>
+                    <input type="text" id="mascotaNombre" required>
+                </div>
+                <div class="form">
+                    <label for="mascotaEspecie">Especie:</label>
+                    <select id="mascotaEspecie" required>
+                        <option value="perro">Perro</option>
+                        <option value="gato">Gato</option>
+                        <option value="ave">Ave</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form">
+                    <label for="mascotaEdad">Edad:</label>
+                    <input type="number" id="mascotaEdad" required min="0">
+                </div>
+                <div class="form">
+                    <label for="mascotaRaza">Raza:</label>
+                    <input type="text" id="mascotaRaza">
+                </div>
+                <div class="form">
+                    <label for="mascotaTamanio">Tamaño:</label>
+                    <select id="mascotaTamanio">
+                        <option value="chico">Chico</option>
+                        <option value="mediano">Mediano</option>
+                        <option value="grande">Grande</option>
+                    </select>
+                </div>
+                <div class="form">
+                    <label for="mascotaImagen">Imagen:</label>
+                    <input type="text" id="mascotaImagen">
+                </div>
+                <button type="submit" class="boton-secundario">Guardar Mascota</button>
+            </form>
+        </div>
+    </div>
 
     <div id="modalEditar" class="modal" style="display:none;">
         <div class="contenidoModal">
             <span class="cerrar" id="cerrarModal">&times;</span>
             <h3>Editar Perfil</h3>
             <form id="formPerfil">
-                <div class="campoForm">
+                <div class="form">
                     <label for="inputNombre">Nombre:</label>
                     <input type="text" id="inputNombre">
                 </div>
-
-                <div class="campoForm">
+                <div class="form">
                     <label for="inputNickname">Nickname:</label>
                     <input type="text" id="inputNickname">
                 </div>
-
-                <div class="campoForm">
-                    <label for="inputContrasenia">Contrasenia:</label>
-                    <input type="text" id="inputContrasenia">
-                </div>
-
-                <div class="campoForm">
+                <div class="form">
                     <label for="inputEmail">Email:</label>
                     <input type="email" id="inputEmail">
                 </div>
-
-                <div class="campoForm">
-                    <label for="inputNacimiento">Fecha de Nacimiento:</label>
+                <div class="form">
+                    <label for="inputContrasenia">Contraseña:</label>
+                    <input type="password" id="inputContrasenia">
+                </div>
+                <div class="form">
+                    <label for="inputTelefono">Teléfono:</label>
+                    <input type="text" id="inputTelefono">
+                </div>
+                <div class="form">
+                    <label for="inputDireccion">Dirección:</label>
+                    <input type="text" id="inputDireccion">
+                </div>
+                <div class="form">
+                    <label for="inputNacimiento">Nacimiento:</label>
                     <input type="date" id="inputNacimiento">
                 </div>
-
-                <div class="campoForm">
+                <div class="form">
                     <label for="inputCiudad">Ciudad:</label>
                     <input type="text" id="inputCiudad">
                 </div>
-
-                <div class="campoForm">
-                    <label for="inputBiografia">Biografia:</label>
-                    <input type="text" id="inputBiografia">
+                <div class="form">
+                    <label for="inputBiografia">Biografía:</label>
+                    <textarea id="inputBiografia"></textarea>
                 </div>
-
-                <button type="submit">Guardar Cambios</button>
+                <div class="form">
+                    <label for="inputImagenUsuario">Imagen URL:</label>
+                    <input type="text" id="inputImagenUsuario">
+                </div>
+                <button type="submit" class="boton-secundario">Guardar Cambios</button>
             </form>
         </div>
     </div>
