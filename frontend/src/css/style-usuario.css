@@ -8,8 +8,13 @@
 body {
     background-color: #ffffff;
     color: #222121;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
-
+main {
+    flex: 1;
+}
 /* Estilo logo */
 .logo {
     font-weight: bold;
@@ -40,7 +45,7 @@ nav a {
 /* Estructura Perfil */
 .usuarioPerfil {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
     gap: 30px;
     padding: 30px;
 }
@@ -50,7 +55,6 @@ nav a {
     display: flex;
     flex-direction: column;
     align-items: center;
-    grid-column: span 2;
     background-color: #ffe2cc;
     padding: 20px;
     border-radius: 10px;
@@ -71,29 +75,59 @@ h3 {
 }
 
 /* Publicaciones */
-#misPublicaciones {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 10px;
+.publicaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #ffe2cc;
+    padding: 15px;
+    border-radius: 10px;
 }
 
 .publicacion {
+    display: flex;
+    flex-direction: column;
     background-color: #ff914d;
+    padding: 8px;
     border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: center;
-    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+    width: 100%;
 }
 
 .publicacion img {
-    width: 50%;
-    height: 140px;
-    object-fit: cover;
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    object-fit: contain;
     border-radius: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
+
+.publicacion p {
+    font-size: 15px;
+    margin: 0 0 6px 0;
+    text-align: left;
+}
+
+.publicacion .botonEliminar {
+    align-self: flex-end;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar section, #solicitudesContainer {
+    background-color: #ffe2cc;
+    padding: 10px;
+    border-radius: 10px;
+}
+
 /* Solicitudes,Amigos,Mascotas */
 .tarjeta {
     display: flex;
@@ -107,7 +141,7 @@ h3 {
 }
 
 .amigoItem, .mascotaItem {
-    width: 60px;
+    width: 80px;
 }
 
 .solicitudItem {
@@ -131,27 +165,23 @@ h3 {
     word-break: break-word;
 }
 
-#galeriaMascotas, .galeria-amigos {
+#galeriaMascotas, .galeriaAmigos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     padding: 0;
 }
 
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+#galeriaMascotas p, .galeriaAmigos p, #solicitudesContainer p, .publicaciones p {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 0;
+    background: none;
+    border-radius: 0;
 }
 
+/* Modal */
 .contenidoModal {
     background: white;
     padding: 20px;
@@ -223,37 +253,82 @@ h3 {
     transition: 0.2s;
 }
 
-.boton-principal {
+.botonPrincipal {
     padding: 10px 20px;
     background-color: #ff914d;
     color: white;
     font-size: 16px;
 }
 
-.boton-principal:hover {
+.botonPrincipal:hover {
     background-color: #ff7a2f;
 }
 
-.boton-secundario {
+.botonsecundario {
     background-color: #ffa866;
     color: white;
 }
 
-.boton-secundario:hover {
+.botonSecundario:hover {
     background-color: #ff914d;
 }
 
-.boton-eliminar {
+.botonEliminar {
     background-color: #ff5252;
     color: white;
 }
 
-.boton-eliminar:hover {
+.botonEliminar:hover {
     background-color: #e84141;
 }
 
-.boton-bloqueado {
-    background-color: gray !important;
-    cursor: not-allowed !important;
-    opacity: 0.7;
+.botonIniciarSesion {
+    background-color: #ff914d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px;
+    transition: background-color 0.3s;
+}
+
+.botonIniciarSesion:hover {
+    background-color: #ff7a2f;
+}
+
+.botonRegistro {
+    background-color: #ffa866;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px;
+    transition: background-color 0.3s;
+}
+
+.botonRegistro:hover {
+    background-color: #ff914d;
+}
+
+
+/* Bienvenida */
+.seccionBienvenida {
+    text-align: center;
+    padding: 80px 20px;
+    background: url("../images/imagen-fondo1.jpg") center/cover no-repeat;
+    color: rgb(51, 51, 51);
+}
+
+/* Footer */
+footer {
+    background-color: #ff914d;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-weight: bold;
+    border-top: 3px solid #ff7a2f;
 }
