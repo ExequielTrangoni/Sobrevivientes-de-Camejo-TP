@@ -18,11 +18,20 @@
         </nav>
     </header>
 
-    <main class="usuarioPerfil">
+    <main>
+        <section class="seccionBienvenida" style="display: block">
+            <h2>Petconnect</h2>
+            <p>Conecta con mascotas que necesitan amor y cariño 💛</p>
+            <button class="botonIniciarSesion" onclick="window.location.href='./login.html'">Iniciar Sesion</button>
+            <button class="botonRegistro" onclick="window.location.href='./registro.html'" >Registrarse</button>
+        </section>
+    </main>
+
+    <main class="usuarioPerfil" style="display: none" >
         <section class="perfil">
             <img id="fotoPerfil" src="" alt="Foto de perfil" class="fotoPerfil">
             <div id="accionesPerfil">
-                <button id="botonAgregarAmigo" class="boton boton-principal">Agregar Amigo</button>
+                <button id="botonAgregarAmigo" class="boton botonPrincipal">Agregar Amigo</button>
             </div>
             <div id="zonaSolicitudesPerfil"></div>
             <h2>Mi Perfil</h2>
@@ -35,36 +44,37 @@
             <p id="nacimiento"></p>
             <p id="ciudad"></p>
             <p id="biografia"></p>
-            <button id="botonEditarPerfil" class="boton boton-secundario">Editar Perfil</button>
+            <button id="botonEditarPerfil" class="boton botonSecundario">Editar Perfil</button>
         </section>
 
-        <section class="publicaciones">
-            <h3>Mis Publicaciones (<span id="totalPublicaciones">0</span>)</h3>
+        <div class="publicaciones">
+            <h3>Publicaciones (<span id="totalPublicaciones">0</span>)</h3>
+            <button id="botonAbrirFormPublicacion" class="boton botonPrincipal">Agregar Publicación</button>
             <div id="misPublicaciones"></div>
-        </section>
+        </div>
 
         <div class="sidebar">
-            <div id="solicitudes-container">
-                <h3>Solicitudes pendientes (<span id="totalSolicitudes">0</span>)</h3>
+            <div id="solicitudesContainer">
+                <h3>Solicitudes de Amistad (<span id="totalSolicitudes">0</span>)</h3>
                 <ul id="listaSolicitudes"></ul>
             </div>
 
             <section class="amigos">
                 <h3>Amigos (<span id="totalAmigos">0</span>)</h3>
-                <div id="listaAmigos" class="galeria-amigos"></div>
+                <div id="listaAmigos" class="galeriaAmigos"></div>
             </section>
 
             <section class="mascotas">
                 <h3>Mascotas (<span id="totalMascotas">0</span>)</h3>
                 <div id="galeriaMascotas"></div>
 
-                <button id="botonAbrirFormMascota" class="boton boton-secundario">Agregar Mascota</button>
+                <button id="botonAbrirFormMascota" class="boton botonSecundario">Agregar Mascota</button>
 
             </section>
         </div>
     </main>
 
-    <div id="formMascotaContainer" class="modal" style="display:none;">
+    <div id="modalMascota" class="modal" style="display:none;">
         <div class="contenidoModal">
             <span class="cerrar" id="cerrarFormMascota">&times;</span>
             <h3>Agregar Mascota</h3>
@@ -102,7 +112,7 @@
                     <label for="mascotaImagen">Imagen:</label>
                     <input type="text" id="mascotaImagen">
                 </div>
-                <button type="submit" class="boton-secundario">Guardar Mascota</button>
+                <button type="submit" class="botonSecundario">Guardar Mascota</button>
             </form>
         </div>
     </div>
@@ -152,10 +162,41 @@
                     <label for="inputImagenUsuario">Imagen URL:</label>
                     <input type="text" id="inputImagenUsuario">
                 </div>
-                <button type="submit" class="boton-secundario">Guardar Cambios</button>
+                <button type="submit" class="botonSecundario">Guardar Cambios</button>
             </form>
         </div>
     </div>
+
+    <div id="modalPublicacion" class="modal" style="display:none;">
+        <div class="contenidoModal">
+            <span class="cerrar" id="cerrarFormPublicacion">&times;</span>
+            <h3>Agregar Publicación</h3>
+            <form id="formPublicacion">
+                <div class="form">
+                    <label for="pubTitulo">Título:</label>
+                    <input type="text" id="pubTitulo" required>
+                </div>
+                <div class="form">
+                    <label for="pubDescripcion">Descripción:</label>
+                    <textarea id="pubDescripcion" required></textarea>
+                </div>
+                <div class="form">
+                    <label for="pubImagen">Imagen URL:</label>
+                    <input type="text" id="pubImagen">
+                </div>
+                <div class="form">
+                    <label for="pubUbicacion">Ubicación:</label>
+                    <input type="text" id="pubUbicacion" required>
+                </div>
+                <div class="form">
+                    <label for="pubMascota">Mascota:</label>
+                    <select id="pubMascota" required></select>
+                </div>
+                <button type="submit" class="botonSecundario">Guardar Publicación</button>
+            </form>
+        </div>
+    </div>
+
 
     <div id="modalLogin" class="modal" style="display:none;">
         <div class="contenidoModal">
