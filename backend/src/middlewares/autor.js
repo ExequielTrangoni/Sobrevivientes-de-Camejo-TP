@@ -8,7 +8,7 @@ const autenticar = (req, res, next) => {
   const tipo = secciones[0];
   const token = secciones[1];
 
-  if (secciones.length !== 2 || tipo[0] !== 'Bearer') {
+  if (secciones.length !== 2 || tipo !== 'Bearer') {
     return res.status(401).json({ error: 'Formato de token inválido' });
   }
 
