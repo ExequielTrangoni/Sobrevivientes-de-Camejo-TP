@@ -304,12 +304,13 @@ function renderMascotas() {
         `;
         if (esPerfilPropio) {
             div.querySelector('.botonEliminar').addEventListener('click', async () => {
-                if (!confirm("¿Seguro que deseas eliminar esta mascota?")) return;
+                if (!confirm("¿Seguro que deseas eliminar esta mascota?\nSe borraran todas las publicaciones de esta mascota")) return;
                 await fetch(`${API_MASCOTAS}/${m.id}`, {
                     method: 'DELETE',
                     headers: { Authorization: "Bearer " + localStorage.getItem('token') }
                 });
                 await cargarMascotas();
+                await cargarPublicaciones();
                 actualizarTotales();
             });
         }
