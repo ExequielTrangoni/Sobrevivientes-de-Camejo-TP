@@ -327,6 +327,10 @@ h3 {
     background-color: #ff914d;
 }
 
+.botonLogout {
+    color: white;
+}
+
 
 /* Bienvenida */
 .seccionBienvenida {

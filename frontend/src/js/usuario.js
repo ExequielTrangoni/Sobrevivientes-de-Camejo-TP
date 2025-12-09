@@ -35,6 +35,8 @@ const params = new URLSearchParams(window.location.search);
 const perfilId = params.get("usuarioId");
 const mostrarId = perfilId || getUsuarioId();
 
+const botonLogout = document.getElementById('botonLogout');
+
 document.addEventListener("DOMContentLoaded", async () => {
     const seccionBienvenida = document.querySelector(".seccionBienvenida");
     const mainPerfil = document.querySelector("main.usuarioPerfil");
@@ -641,17 +643,21 @@ formMascota.addEventListener('submit', async (e) => {
         console.error("Error al agregar mascota:", err);
     }
 });
-//PRUEBA
-//const botonLogout = document.createElement('button');
-//botonLogout.textContent = 'Cerrar sesión';
-//botonLogout.addEventListener('click', () => {
-//    localStorage.removeItem('token');
-//    localStorage.removeItem('usuario');
-//    localStorage.removeItem('usuarioId');
-//    window.location.href = './login.html';
-//});
 
-//document.body.prepend(botonLogout);
+if (botonLogout) {
+    botonLogout.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('usuarioId');
+        alert('Sesión cerrada correctamente.');
+        window.location.reload();
+    });
+}
+
+if (!getUsuarioId() && botonLogout) {
+    botonLogout.style.display = 'none';
+}
 
 async function initPerfil() {
     try {
