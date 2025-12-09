@@ -5,44 +5,38 @@ const autenticar = require('../middlewares/autor');
 
 router.get('/', async (req, res) => {
   try {
-    const resultado = await pool.query('SELECT * FROM mascotas ORDER BY id');
+      const {duenio_id} = req.query;
+      let resultado;
+      if(duenio_id){
+          resultado = await pool.query('SELECT * FROM mascotas WHERE duenio_id = $1 ORDER BY id',[duenio_id]);
+      }else{
+          resultado = await pool.query('SELECT * FROM mascotas ORDER BY id');
+      }
     res.json(resultado.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.post('/', async (req, res) => {
-<<<<<<< HEAD
-  let { 
-  nombre, 
-  especie, 
-  raza, 
-  edad, 
+router.post('/',autenticar, async (req, res) => {
+  let {
+  nombre,
+  especie,
+  raza,
+  edad,
   tamanio,
-  imagen_mascota, 
+  imagen_mascota,
   } = req.body;
-=======
-  const { nombre, especie, raza, edad, tamanio, duenio_id } = req.body;
-  
-  const query = `
-    INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, duenio_id)
-    VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING *
-  `;
-  const valores = [nombre, especie, raza, edad, tamanio, duenio_id];
->>>>>>> origin/frontend
 
+    const duenio_id = req.user.id;
   if (!nombre || !especie || !edad || !duenio_id) {
     return res.status(400).json({ error: "Campos obligatorios: nombre, especie, edad, duenio_id" });
   }
-  
+
   raza = raza || 'otro';
   tamanio = tamanio || null;
   imagen_mascota = imagen_mascota || null;
-  
-  const duenio_id = req.user.id;
-  
+
   try {
     const queryMascota = `
       INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, imagen_mascota, duenio_id)
