@@ -30,7 +30,7 @@ CREATE TABLE publicaciones (
     id SERIAL PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
     descripcion TEXT NOT NULL,
-    imagen_publicacion varchar(250),
+    imagen_publicacion varchar(250) NOT NULL,
     fecha_publicacion DATE DEFAULT CURRENT_DATE,
     ubicacion VARCHAR(100) NOT NULL,
     mascota_id INT NOT NULL REFERENCES mascotas(id) ON DELETE CASCADE

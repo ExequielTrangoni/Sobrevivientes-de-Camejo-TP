@@ -5,38 +5,40 @@ const autenticar = require('../middlewares/autor');
 
 router.get('/', async (req, res) => {
   try {
-      const {duenio_id} = req.query;
-      let resultado;
-      if(duenio_id){
-          resultado = await pool.query('SELECT * FROM mascotas WHERE duenio_id = $1 ORDER BY id',[duenio_id]);
-      }else{
-          resultado = await pool.query('SELECT * FROM mascotas ORDER BY id');
-      }
+    const resultado = await pool.query('SELECT * FROM mascotas ORDER BY id');
     res.json(resultado.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.post('/',autenticar, async (req, res) => {
-  let {
-  nombre,
-  especie,
-  raza,
-  edad,
+router.post('/', async (req, res) => {
+  let { 
+  nombre, 
+  especie, 
+  raza, 
+  edad, 
   tamanio,
-  imagen_mascota,
+  imagen_mascota, 
   } = req.body;
+  
+  const query = `
+    INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, duenio_id)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING *
+  `;
+  const valores = [nombre, especie, raza, edad, tamanio, duenio_id];
 
-    const duenio_id = req.user.id;
   if (!nombre || !especie || !edad || !duenio_id) {
     return res.status(400).json({ error: "Campos obligatorios: nombre, especie, edad, duenio_id" });
   }
-
+  
   raza = raza || 'otro';
   tamanio = tamanio || null;
   imagen_mascota = imagen_mascota || null;
-
+  
+  const duenio_id = req.user.id;
+  
   try {
     const queryMascota = `
       INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, imagen_mascota, duenio_id)
@@ -71,6 +73,17 @@ router.delete('/:id', autenticar, async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/usuario/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const consulta = 'SELECT * FROM mascotas WHERE duenio_id = $1';
+    const resultado = await pool.query(consulta, [id]);
+    res.json(resultado.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
