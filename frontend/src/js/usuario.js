@@ -389,28 +389,21 @@ function renderPublicaciones() {
 formPublicacion.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const datos = {
-        titulo: document.getElementById('pubTitulo').value,
-        descripcion: document.getElementById('pubDescripcion').value,
-        imagen_publicacion: document.getElementById('pubImagen').value || null,
-        ubicacion: document.getElementById('pubUbicacion').value,
-        mascota_id: parseInt(document.getElementById('pubMascota').value)
-    };
+    const formData = new FormData(formPublicacion);
 
     try {
         const res = await fetch(API_PUBLICACIONES, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 Authorization: 'Bearer ' + localStorage.getItem('token')
             },
-            body: JSON.stringify(datos)
+            body: formData
         });
 
         if (!res.ok) {
-            const error = await res.text();
-            console.error('Error al agregar publicacion:', error);
-            alert('Error al agregar publicacion');
+            const err = await res.text();
+            console.error(err);
+            alert('Error al crear publicación');
             return;
         }
 
