@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const autenticar = require('../middlewares/autor');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
@@ -19,7 +18,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', autenticar, async (req, res) => {
+
+router.get('/', async (req, res) => {
   try {
     const resultado = await pool.query('SELECT * FROM usuarios');
     res.json(resultado.rows);
@@ -82,9 +82,8 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/enviar', autenticar, async (req, res) => {
-    const usuarioId = req.user.id;
-    const {amigoId} = req.body;
+router.post('/enviar', async (req, res) => {
+    const {usuarioId,amigoId} = req.body;
 
     if(usuarioId === amigoId) {
         return res.status(400).json({ error: 'No puedes agregarte a ti mismo' });
@@ -108,9 +107,8 @@ router.post('/enviar', autenticar, async (req, res) => {
     }
 })
 
-router.post('/aceptar',autenticar, async (req, res) => {
-    const usuarioId = req.user.id;
-    const{amigoId} = req.body;
+router.post('/aceptar', async (req, res) => {
+    const{usuarioId,amigoId} = req.body;
 
     try {
         const resultado = await pool.query(
@@ -127,7 +125,7 @@ router.post('/aceptar',autenticar, async (req, res) => {
     }
 })
 
-router.get('/:id/amigos',autenticar, async (req, res) => {
+router.get('/:id/amigos', async (req, res) => {
     const { id } = req.params;
     try {
         const resultado = await pool.query(
@@ -144,7 +142,7 @@ router.get('/:id/amigos',autenticar, async (req, res) => {
     }
 });
 
-router.get('/:id/amigos-pendientes',autenticar, async (req, res) => {
+router.get('/:id/amigos-pendientes', async (req, res) => {
     const { id } = req.params;
     try {
         const resultado = await pool.query(
@@ -159,9 +157,9 @@ router.get('/:id/amigos-pendientes',autenticar, async (req, res) => {
     }
 });
 
-router.delete('/:id/amigos/:amigoId',autenticar, async (req, res) => {
-    const usuarioId = req.user.id;
-    const { amigoId } = req.params;
+router.delete('/:id/amigos/:amigoId', async (req, res) => {
+    const usuarioId = req.params.id;
+    const amigoId = req.params.amigoId;
     try {
         await pool.query(
             `DELETE FROM amigos
@@ -204,7 +202,7 @@ router.put('/:id', upload.single('imagen_usuario'), async (req, res) => {
 });
 
 
-router.get('/:id',autenticar, async (req, res) => {
+router.get('/:id', async (req, res) => {
     const { id } = req.params;
     if (!/^\d+$/.test(id)) {
         return res.status(400).json({ error: 'ID inválido, debe ser un número' });
@@ -223,7 +221,7 @@ router.get('/:id',autenticar, async (req, res) => {
     }
 });
 
-router.delete('/:id',autenticar, async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     if (!/^\d+$/.test(id)) {
         return res.status(400).json({ error: 'ID inválido, debe ser un número' });
