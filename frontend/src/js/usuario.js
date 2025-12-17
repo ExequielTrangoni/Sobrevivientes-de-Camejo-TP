@@ -441,27 +441,16 @@ window.addEventListener('click', e => {
 
 formPerfil.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const fechaInput = document.getElementById("inputNacimiento").value;
-    const datos = {
-        nombre: document.getElementById("inputNombre").value,
-        nickname: document.getElementById("inputNickname").value,
-        email: document.getElementById("inputEmail").value,
-        contrasenia: document.getElementById("inputContrasenia").value,
-        imagen_usuario: document.getElementById("inputImagenUsuario").value,
-        telefono: document.getElementById("inputTelefono").value,
-        direccion: document.getElementById("inputDireccion").value,
-        nacimiento: fechaInput === "" ? null : fechaInput,
-        ciudad: document.getElementById("inputCiudad").value,
-        biografia: document.getElementById("inputBiografia").value
-    };
+
+    const formData = new FormData(formPerfil);
+
     try {
         await fetch(`${API_USUARIO}/${getUsuarioId()}`, {
             method: 'PUT',
             headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem('token')
+                Authorization: 'Bearer ' + localStorage.getItem('token')
             },
-            body: JSON.stringify(datos)
+            body: formData
         });
         await cargarPerfil();
         modalEditar.style.display = 'none';
@@ -605,43 +594,24 @@ async function rechazarSolicitud(remitenteId) {
 }
 
 formMascota.addEventListener('submit', async (e) => {
-    const token = localStorage.getItem('token');
     e.preventDefault();
 
-    const datos = {
-        nombre: document.getElementById("mascotaNombre").value,
-        especie: document.getElementById("mascotaEspecie").value,
-        edad: parseInt(document.getElementById("mascotaEdad").value),
-        raza: document.getElementById("mascotaRaza").value || "no-tiene",
-        tamanio: document.getElementById("mascotaTamanio").value,
-        imagen_mascota: document.getElementById("mascotaImagen").value || null,
-    };
+    const formData = new FormData(formMascota);
 
     try {
-        if(!token) {
-            console.error("No hay token")
-            return;
-        }
-        const res = await fetch(API_MASCOTAS, {
+        await fetch(`${API_MASCOTAS}`, {
             method: "POST",
-            headers: {"Content-Type": "application/json",
+            headers: {
                 Authorization: "Bearer " + localStorage.getItem('token')},
-                body: JSON.stringify(datos)
+            body: formData
         });
-
-        if (!res.ok) {
-            const error = await res.text();
-            console.error("Error backend:", error);
-            return;
-        }
 
         await cargarMascotas();
         actualizarTotales();
         formMascota.reset();
-        modalMascota.style.display = 'none';
-
+        document.getElementById('modalMascota').style.display = 'none';
     } catch (err) {
-        console.error("Error al agregar mascota:", err);
+        console.error('Error al agregar mascota', err);
     }
 });
 
