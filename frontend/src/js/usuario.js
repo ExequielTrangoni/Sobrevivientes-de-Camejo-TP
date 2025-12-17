@@ -1,6 +1,7 @@
 const API_USUARIO = "http://localhost:3000/api/usuarios";
 const API_MASCOTAS = "http://localhost:3000/api/mascotas";
 const API_PUBLICACIONES = "http://localhost:3000/api/publicaciones";
+const BACKEND = "http://localhost:3000";
 
 
 let usuario = {};
@@ -151,7 +152,11 @@ async function cargarPerfil() {
 function renderPerfil() {
     const esPerfilPropio = mostrarId == getUsuarioId();
 
-    document.getElementById("fotoPerfil").src = usuario.imagen_usuario || "../images/gato-1.jpg";
+    const fotoURL = usuario.imagen_usuario
+        ? `${BACKEND}/uploads/${usuario.imagen_usuario}`
+        : "../images/gato-1.jpg";
+
+    document.getElementById("fotoPerfil").src = fotoURL;
     document.getElementById("nombre").textContent = `Nombre: ${usuario.nombre}`;
     document.getElementById("nickname").textContent = `Nickname: ${usuario.nickname || ''}`;
     const contrasenia = document.getElementById("contrasenia");
@@ -164,7 +169,9 @@ function renderPerfil() {
     document.getElementById("email").textContent = `Email: ${usuario.email}`;
     document.getElementById("telefono").textContent = `Telefono: ${usuario.telefono}`;
     document.getElementById("direccion").textContent = `Direccion: ${usuario.direccion}`;
-    document.getElementById("nacimiento").textContent = `Nacimiento: ${usuario.nacimiento || ''}`;
+    document.getElementById("nacimiento").textContent = usuario.nacimiento
+        ? `Nacimiento: ${usuario.nacimiento}`
+        : "Nacimiento: ";
     document.getElementById("ciudad").textContent = `Ciudad: ${usuario.ciudad || ''}`;
     document.getElementById("biografia").textContent = `Biografía: ${usuario.biografia || ''}`;
 }
@@ -256,7 +263,7 @@ function renderAmigos() {
         const div = document.createElement('div');
         div.className = 'tarjeta amigoItem';
         div.innerHTML = `
-            <img class="imgRedonda" src="${amigo.imagen_usuario || '../images/gato-1.jpg'}" alt="${amigo.nombre}">
+            <img class="imgRedonda" src="${amigo.imagen_usuario ? `${BACKEND}/uploads/${amigo.imagen_usuario}` : '../images/gato-1.jpg'}" alt="${amigo.nombre}">
             <h4 class="textoCompacto">${linkPerfil(amigo.id, amigo.nombre)}</h4>
             ${esPerfilPropio ? '<button class="boton botonEliminar">🗑</button>' : ''}
         `;
@@ -300,7 +307,7 @@ function renderMascotas() {
         const div = document.createElement('div');
         div.className = 'tarjeta mascotaItem';
         div.innerHTML = `
-            <img class="imgRedonda" src="${m.imagen_mascota || '../images/perro-1.jpg'}" alt="${m.nombre}">
+            <img class="imgRedonda" src="${m.imagen_mascota ? `${BACKEND}/uploads/${m.imagen_mascota}` : '../images/perro-1.jpg'}" alt="${m.nombre}">
             <p class="textoCompacto">${m.nombre}</p>
             ${esPerfilPropio ? '<button class="boton botonEliminar">🗑</button>' : ''}
         `;
@@ -354,7 +361,8 @@ function renderPublicaciones() {
         div.className = 'publicacion';
         div.innerHTML = `
             ${esPerfilPropio ? '<button class="boton botonEliminar">🗑</button>' : ''}
-            <img src="${p.imagen_publicacion || '../images/publicacion-ejemplo.webp'}" alt="Publicación">
+            <img src="${
+            p.imagen_publicacion ? `${BACKEND}/uploads/${p.imagen_publicacion}` : '../images/publicacion-ejemplo.jpg'}">
             <h4>${p.titulo}</h4>
             <p>${p.descripcion}</p>
             <small>Ubicación: ${p.ubicacion}</small>
@@ -509,7 +517,7 @@ function renderSolicitudes() {
             const li = document.createElement('li');
             li.className = 'tarjeta solicitudItem';
             li.innerHTML = `
-                <img class="imgRedonda" src="${solicitud.imagen_usuario || '../images/gato-1.jpg'}" alt="${solicitud.nombre}">
+                <img class="imgRedonda" src="${solicitud.imagen_usuario ? `${BACKEND}/uploads/${solicitud.imagen_usuario}` : '../images/gato-1.jpg'}" alt="${solicitud.nombre}">
                 <h4 class="textoCompacto">
                     ${linkPerfil(solicitud.id, solicitud.nombre)}
                 </h4>
