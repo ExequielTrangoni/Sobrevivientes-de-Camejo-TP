@@ -79,14 +79,14 @@
         <div class="contenidoModal">
             <span class="cerrar" id="cerrarFormMascota">&times;</span>
             <h3>Agregar Mascota</h3>
-            <form id="formMascota">
+            <form id="formMascota" enctype="multipart/form-data">
                 <div class="form">
                     <label for="mascotaNombre">Nombre:</label>
-                    <input type="text" id="mascotaNombre" required>
+                    <input type="text" id="mascotaNombre" name="mascotaNombre" required>
                 </div>
                 <div class="form">
                     <label for="mascotaEspecie">Especie:</label>
-                    <select id="mascotaEspecie" required>
+                    <select id="mascotaEspecie" name="mascotaEspecie" required>
                         <option value="perro">Perro</option>
                         <option value="gato">Gato</option>
                         <option value="ave">Ave</option>
@@ -95,15 +95,15 @@
                 </div>
                 <div class="form">
                     <label for="mascotaEdad">Edad:</label>
-                    <input type="number" id="mascotaEdad" required min="0">
+                    <input type="number" id="mascotaEdad" name="mascotaEdad" required min="0">
                 </div>
                 <div class="form">
                     <label for="mascotaRaza">Raza:</label>
-                    <input type="text" id="mascotaRaza">
+                    <input type="text" id="mascotaRaza" name="mascotaRaza">
                 </div>
                 <div class="form">
                     <label for="mascotaTamanio">Tamaño:</label>
-                    <select id="mascotaTamanio">
+                    <select id="mascotaTamanio" name="mascotaTamanio">
                         <option value="chico">Chico</option>
                         <option value="mediano">Mediano</option>
                         <option value="grande">Grande</option>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="form">
                     <label for="mascotaImagen">Imagen:</label>
-                    <input type="text" id="mascotaImagen">
+                    <input type="file" id="mascotaImagen" name="imagen_mascota">
                 </div>
                 <button type="submit" class="botonSecundario">Guardar Mascota</button>
             </form>
@@ -125,43 +125,43 @@
             <form id="formPerfil">
                 <div class="form">
                     <label for="inputNombre">Nombre:</label>
-                    <input type="text" id="inputNombre">
+                    <input type="text" id="inputNombre" name="nombre">
                 </div>
                 <div class="form">
                     <label for="inputNickname">Nickname:</label>
-                    <input type="text" id="inputNickname">
+                    <input type="text" id="inputNickname" name="nickname">
                 </div>
                 <div class="form">
                     <label for="inputEmail">Email:</label>
-                    <input type="email" id="inputEmail">
+                    <input type="email" id="inputEmail" name="email">
                 </div>
                 <div class="form">
                     <label for="inputContrasenia">Contraseña:</label>
-                    <input type="password" id="inputContrasenia">
+                    <input type="password" id="inputContrasenia" name="contrasenia">
                 </div>
                 <div class="form">
                     <label for="inputTelefono">Teléfono:</label>
-                    <input type="text" id="inputTelefono">
+                    <input type="text" id="inputTelefono" name="telefono">
                 </div>
                 <div class="form">
                     <label for="inputDireccion">Dirección:</label>
-                    <input type="text" id="inputDireccion">
+                    <input type="text" id="inputDireccion" name="direccion">
                 </div>
                 <div class="form">
                     <label for="inputNacimiento">Nacimiento:</label>
-                    <input type="date" id="inputNacimiento">
+                    <input type="date" id="inputNacimiento" name="nacimiento">
                 </div>
                 <div class="form">
                     <label for="inputCiudad">Ciudad:</label>
-                    <input type="text" id="inputCiudad">
+                    <input type="text" id="inputCiudad" name="ciudad">
                 </div>
                 <div class="form">
                     <label for="inputBiografia">Biografía:</label>
-                    <textarea id="inputBiografia"></textarea>
+                    <textarea id="inputBiografia" name="biografia"></textarea>
                 </div>
                 <div class="form">
-                    <label for="inputImagenUsuario">Imagen URL:</label>
-                    <input type="text" id="inputImagenUsuario">
+                    <label for="inputImagenUsuario">Imagen:</label>
+                    <input type="file" id="inputImagenUsuario" name="imagen_usuario">
                 </div>
                 <button type="submit" class="botonSecundario">Guardar Cambios</button>
             </form>
@@ -172,26 +172,28 @@
         <div class="contenidoModal">
             <span class="cerrar" id="cerrarFormPublicacion">&times;</span>
             <h3>Agregar Publicación</h3>
-            <form id="formPublicacion">
+            <form id="formPublicacion" enctype="multipart/form-data">
                 <div class="form">
                     <label for="pubTitulo">Título:</label>
-                    <input type="text" id="pubTitulo" required>
+                    <input type="text" id="pubTitulo" name="titulo" required>
                 </div>
                 <div class="form">
                     <label for="pubDescripcion">Descripción:</label>
-                    <textarea id="pubDescripcion" required></textarea>
+                    <textarea id="pubDescripcion" name="descripcion" required></textarea>
                 </div>
                 <div class="form">
-                    <label for="pubImagen">Imagen URL:</label>
-                    <input type="text" id="pubImagen">
+                    <label for="pubImagen">Imagen:</label>
+                    <input type="file" id="pubImagen" name="imagen_publicacion" accept="image/*">
                 </div>
                 <div class="form">
                     <label for="pubUbicacion">Ubicación:</label>
-                    <input type="text" id="pubUbicacion" required>
+                    <input type="text" id="pubUbicacion" name="ubicacion" required>
                 </div>
                 <div class="form">
                     <label for="pubMascota">Mascota:</label>
-                    <select id="pubMascota" required></select>
+                    <select id="pubMascota" name="mascota_id" required>
+                        <option value="" disabled selected>Seleccionar mascota</option>
+                    </select>
                 </div>
                 <button type="submit" class="botonSecundario">Guardar Publicación</button>
             </form>
