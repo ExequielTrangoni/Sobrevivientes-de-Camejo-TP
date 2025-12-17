@@ -146,7 +146,7 @@ router.get('/:id/amigos-pendientes', async (req, res) => {
     const { id } = req.params;
     try {
         const resultado = await pool.query(
-            `SELECT u.id, u.nombre, u.email
+            `SELECT u.id, u.nombre, u.email, u.imagen_usuario
              FROM amigos a JOIN usuarios u ON u.id = a.usuario_id
              WHERE a.amigo_id = $1 AND a.estado = 'pendiente'`,
             [id]
