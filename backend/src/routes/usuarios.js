@@ -3,6 +3,21 @@ const router = express.Router();
 const pool = require('../db');
 const autenticar = require('../middlewares/autor');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+
+const uploadDir = path.join(__dirname, '../../uploads');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir)
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+});
+
+const upload = multer({ storage: storage });
 
 router.get('/', autenticar, async (req, res) => {
   try {
@@ -160,14 +175,14 @@ router.delete('/:id/amigos/:amigoId',autenticar, async (req, res) => {
     }
 });
 
-router.put('/:id',autenticar, async (req, res) => {
+router.put('/:id', upload.single('imagen_usuario'), async (req, res) => {
     const { id } = req.params;
-    if (!/^\d+$/.test(id)) {
-        return res.status(400).json({ error: 'ID inválido, debe ser un número' });
-    }
 
-    const { nombre, nickname, email, contrasenia, telefono, direccion, imagen_usuario,
-        nacimiento, ciudad, biografia } = req.body;
+    let { nombre, nickname, email, contrasenia, telefono, direccion, nacimiento, ciudad, biografia } = req.body;
+
+    if (nacimiento === "") nacimiento = null;
+
+    let imagen_usuario = req.file ? req.file.filename : req.body.imagen_usuario;
 
     try {
         const resultado = await pool.query(
@@ -175,19 +190,7 @@ router.put('/:id',autenticar, async (req, res) => {
              SET nombre=$1, nickname=$2, email=$3, contrasenia=$4, imagen_usuario=$5,
                  telefono=$6, direccion=$7, nacimiento=$8, ciudad=$9, biografia=$10
              WHERE id=$11 RETURNING *`,
-            [
-                nombre,
-                nickname,
-                email,
-                contrasenia,
-                imagen_usuario,
-                telefono,
-                direccion,
-                nacimiento,
-                ciudad,
-                biografia,
-                id
-            ]
+            [nombre, nickname, email, contrasenia, imagen_usuario, telefono, direccion, nacimiento, ciudad, biografia, id]
         );
 
         if (resultado.rows.length === 0)
