@@ -1,11 +1,15 @@
 CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
-    nombre_completo VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    nickname VARCHAR(50),
     email VARCHAR(100) UNIQUE NOT NULL,
     contrasenia VARCHAR(200) NOT NULL,
     imagen_usuario varchar(250),
     telefono VARCHAR(50) NOT NULL,
     direccion VARCHAR(150) NOT NULL,
+    nacimiento DATE,
+    ciudad VARCHAR(100),
+    biografia TEXT,
     fecha_creacion DATE DEFAULT CURRENT_DATE
 );
 
@@ -30,6 +34,14 @@ CREATE TABLE publicaciones (
     fecha_publicacion DATE DEFAULT CURRENT_DATE,
     ubicacion VARCHAR(100) NOT NULL,
     mascota_id INT NOT NULL REFERENCES mascotas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE amigos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    amigo_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    estado VARCHAR(20) DEFAULT 'pendiente',
+    fecha TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE publicaciones_adopciones (

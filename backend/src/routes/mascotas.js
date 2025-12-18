@@ -2,6 +2,20 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const autenticar = require('../middlewares/autor');
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 
 router.get('/', async (req, res) => {
   try {
@@ -12,47 +26,26 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
-  let { 
-  nombre, 
-  especie, 
-  raza, 
-  edad, 
-  tamanio,
-  imagen_mascota, 
-  } = req.body;
-  
-  const query = `
-    INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, duenio_id)
-    VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING *
-  `;
-  const valores = [nombre, especie, raza, edad, tamanio, duenio_id];
+router.post('/', autenticar, upload.single('imagen_mascota'), async (req, res) => {
+    try {
+        const { mascotaNombre, mascotaEspecie, mascotaEdad, mascotaRaza, mascotaTamanio } = req.body;
+        const duenio_id = req.user.id;
+        if (!mascotaNombre) return res.status(400).json({ error: 'Nombre es obligatorio' });
 
-  if (!nombre || !especie || !edad || !duenio_id) {
-    return res.status(400).json({ error: "Campos obligatorios: nombre, especie, edad, duenio_id" });
-  }
-  
-  raza = raza || 'otro';
-  tamanio = tamanio || null;
-  imagen_mascota = imagen_mascota || null;
-  
-  const duenio_id = req.user.id;
-  
-  try {
-    const queryMascota = `
-      INSERT INTO mascotas (nombre, especie, raza, edad, tamanio, imagen_mascota, duenio_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+        const imagen_mascota = req.file ? req.file.filename : null;
+
+        const resultado = await pool.query(
+            `INSERT INTO mascotas (nombre, especie, edad, raza, tamanio, imagen_mascota, duenio_id)
+      VALUES ($1,$2,$3,$4,$5,$6,$7)
       RETURNING *
-    `;
-    const valoresMascota = [nombre, especie, raza, edad, tamanio, imagen_mascota, duenio_id];
-    const resultadoMascota = await pool.query(queryMascota, valoresMascota);
+    `, [mascotaNombre, mascotaEspecie, mascotaEdad, mascotaRaza, mascotaTamanio, imagen_mascota,duenio_id]
+        );
 
-    res.status(201).json(resultadoMascota.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
+        res.json(resultado.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 

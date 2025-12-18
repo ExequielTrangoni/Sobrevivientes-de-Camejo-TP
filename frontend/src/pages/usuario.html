@@ -11,93 +11,200 @@
         <a href="#" class="logo">🐾 PetConnect</a>
         <nav>
             <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Adopciones</a></li>
-                <li><a href="#">Usuario</a></li>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./adopciones.html">Adopciones</a></li>
+                <li><a href="./usuario.html">Usuario</a></li>
+                <li><a href="#" id="botonLogout" class="botonLogout">Cerrar Sesión</a></li>
             </ul>
         </nav>
     </header>
 
-    <main class="usuarioPerfil">
+    <main>
+        <section class="seccionBienvenida" style="display: block">
+            <h2>Petconnect</h2>
+            <p>Conecta con mascotas que necesitan amor y cariño 💛</p>
+            <button class="botonIniciarSesion" onclick="window.location.href='./login.html'">Iniciar Sesion</button>
+            <button class="botonRegistro" onclick="window.location.href='./registro.html'" >Registrarse</button>
+        </section>
+    </main>
+
+    <main class="usuarioPerfil" style="display: none" >
         <section class="perfil">
             <img id="fotoPerfil" src="" alt="Foto de perfil" class="fotoPerfil">
+            <div id="accionesPerfil">
+                <button id="botonAgregarAmigo" class="boton botonPrincipal">Agregar Amigo</button>
+            </div>
+            <div id="zonaSolicitudesPerfil"></div>
             <h2>Mi Perfil</h2>
             <p id="nombre"></p>
             <p id="nickname"></p>
             <p id="contrasenia"></p>
+            <p id="telefono"></p>
+            <p id="direccion"></p>
             <p id="email"></p>
             <p id="nacimiento"></p>
             <p id="ciudad"></p>
             <p id="biografia"></p>
-            <button id="botonEditarPerfil">Editar Perfil</button>
+            <button id="botonEditarPerfil" class="boton botonSecundario">Editar Perfil</button>
         </section>
 
-        <section class="publicaciones">
-            <h3>Mis Publicaciones (<span id="totalPublicaciones">0</span>)</h3>
+        <div class="publicaciones">
+            <h3>Publicaciones (<span id="totalPublicaciones">0</span>)</h3>
+            <button id="botonAbrirFormPublicacion" class="boton botonPrincipal">Agregar Publicación</button>
             <div id="misPublicaciones"></div>
-        </section>
+        </div>
 
         <div class="sidebar">
+            <div id="solicitudesContainer">
+                <h3>Solicitudes de Amistad (<span id="totalSolicitudes">0</span>)</h3>
+                <ul id="listaSolicitudes"></ul>
+            </div>
+
             <section class="amigos">
                 <h3>Amigos (<span id="totalAmigos">0</span>)</h3>
-                <ul id="listaAmigos"></ul>
+                <div id="listaAmigos" class="galeriaAmigos"></div>
             </section>
 
             <section class="mascotas">
                 <h3>Mascotas (<span id="totalMascotas">0</span>)</h3>
                 <div id="galeriaMascotas"></div>
 
-                <form id="formMascota" class="formAgregar">
-                    <label for="nombreMascota"></label>
-                    <input type="text" id="nombreMascota" placeholder="Nombre de la mascota" required>
-                    <button type="submit">Agregar Mascota</button>
-                </form>
+                <button id="botonAbrirFormMascota" class="boton botonSecundario">Agregar Mascota</button>
+
             </section>
         </div>
     </main>
+
+    <div id="modalMascota" class="modal" style="display:none;">
+        <div class="contenidoModal">
+            <span class="cerrar" id="cerrarFormMascota">&times;</span>
+            <h3>Agregar Mascota</h3>
+            <form id="formMascota" enctype="multipart/form-data">
+                <div class="form">
+                    <label for="mascotaNombre">Nombre:</label>
+                    <input type="text" id="mascotaNombre" name="mascotaNombre" required>
+                </div>
+                <div class="form">
+                    <label for="mascotaEspecie">Especie:</label>
+                    <select id="mascotaEspecie" name="mascotaEspecie" required>
+                        <option value="perro">Perro</option>
+                        <option value="gato">Gato</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form">
+                    <label for="mascotaEdad">Edad:</label>
+                    <input type="number" id="mascotaEdad" name="mascotaEdad" required min="0">
+                </div>
+                <div class="form">
+                    <label for="mascotaRaza">Raza:</label>
+                    <input type="text" id="mascotaRaza" name="mascotaRaza">
+                </div>
+                <div class="form">
+                    <label for="mascotaTamanio">Tamaño:</label>
+                    <select id="mascotaTamanio" name="mascotaTamanio">
+                        <option value="chico">Chico</option>
+                        <option value="mediano">Mediano</option>
+                        <option value="grande">Grande</option>
+                    </select>
+                </div>
+                <div class="form">
+                    <label for="mascotaImagen">Imagen:</label>
+                    <input type="file" id="mascotaImagen" name="imagen_mascota" accept="image/*">
+                </div>
+                <button type="submit" class="botonSecundario">Guardar Mascota</button>
+            </form>
+        </div>
+    </div>
 
     <div id="modalEditar" class="modal" style="display:none;">
         <div class="contenidoModal">
             <span class="cerrar" id="cerrarModal">&times;</span>
             <h3>Editar Perfil</h3>
             <form id="formPerfil">
-                <div class="campoForm">
+                <div class="form">
                     <label for="inputNombre">Nombre:</label>
-                    <input type="text" id="inputNombre">
+                    <input type="text" id="inputNombre" name="nombre">
                 </div>
-
-                <div class="campoForm">
+                <div class="form">
                     <label for="inputNickname">Nickname:</label>
-                    <input type="text" id="inputNickname">
+                    <input type="text" id="inputNickname" name="nickname">
                 </div>
-
-                <div class="campoForm">
-                    <label for="inputContrasenia">Contrasenia:</label>
-                    <input type="text" id="inputContrasenia">
-                </div>
-
-                <div class="campoForm">
+                <div class="form">
                     <label for="inputEmail">Email:</label>
-                    <input type="email" id="inputEmail">
+                    <input type="email" id="inputEmail" name="email">
                 </div>
-
-                <div class="campoForm">
-                    <label for="inputNacimiento">Fecha de Nacimiento:</label>
-                    <input type="date" id="inputNacimiento">
+                <div class="form">
+                    <label for="inputContrasenia">Contraseña:</label>
+                    <input type="password" id="inputContrasenia" name="contrasenia">
                 </div>
-
-                <div class="campoForm">
+                <div class="form">
+                    <label for="inputTelefono">Teléfono:</label>
+                    <input type="text" id="inputTelefono" name="telefono">
+                </div>
+                <div class="form">
+                    <label for="inputDireccion">Dirección:</label>
+                    <input type="text" id="inputDireccion" name="direccion">
+                </div>
+                <div class="form">
+                    <label for="inputNacimiento">Nacimiento:</label>
+                    <input type="date" id="inputNacimiento" name="nacimiento">
+                </div>
+                <div class="form">
                     <label for="inputCiudad">Ciudad:</label>
-                    <input type="text" id="inputCiudad">
+                    <input type="text" id="inputCiudad" name="ciudad">
                 </div>
-
-                <div class="campoForm">
-                    <label for="inputBiografia">Biografia:</label>
-                    <input type="text" id="inputBiografia">
+                <div class="form">
+                    <label for="inputBiografia">Biografía:</label>
+                    <textarea id="inputBiografia" name="biografia"></textarea>
                 </div>
-
-                <button type="submit">Guardar Cambios</button>
+                <div class="form">
+                    <label for="inputImagenUsuario">Imagen:</label>
+                    <input type="file" id="inputImagenUsuario" name="imagen_usuario" accept="image/*">
+                </div>
+                <button type="submit" class="botonSecundario">Guardar Cambios</button>
             </form>
+        </div>
+    </div>
+
+    <div id="modalPublicacion" class="modal" style="display:none;">
+        <div class="contenidoModal">
+            <span class="cerrar" id="cerrarFormPublicacion">&times;</span>
+            <h3>Agregar Publicación</h3>
+            <form id="formPublicacion" enctype="multipart/form-data">
+                <div class="form">
+                    <label for="pubTitulo">Título:</label>
+                    <input type="text" id="pubTitulo" name="titulo" required>
+                </div>
+                <div class="form">
+                    <label for="pubDescripcion">Descripción:</label>
+                    <textarea id="pubDescripcion" name="descripcion" required></textarea>
+                </div>
+                <div class="form">
+                    <label for="pubImagen">Imagen:</label>
+                    <input type="file" id="pubImagen" name="imagen_publicacion" accept="image/*" required>
+                </div>
+                <div class="form">
+                    <label for="pubUbicacion">Ubicación:</label>
+                    <input type="text" id="pubUbicacion" name="ubicacion" required>
+                </div>
+                <div class="form">
+                    <label for="pubMascota">Mascota:</label>
+                    <select id="pubMascota" name="mascota_id" required>
+                        <option value="" disabled selected>Seleccionar mascota</option>
+                    </select>
+                </div>
+                <button type="submit" class="botonSecundario">Guardar Publicación</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="modalLogin" class="modal" style="display:none;">
+        <div class="contenidoModal">
+            <h3>No has iniciado sesión</h3>
+            <p>Debes iniciar sesión para ver tu perfil.</p>
+            <button id="botonIrLogin">Ir a Iniciar Sesion</button>
         </div>
     </div>
 
