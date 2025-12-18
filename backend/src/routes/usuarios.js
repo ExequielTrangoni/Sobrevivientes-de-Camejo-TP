@@ -45,7 +45,7 @@ router.post('/registro', async (req, res) => {
     const token = jwt.sign(
         { id: usuario.id, nombre: usuario.nombre },
         process.env.JWT_SECRET || 'contra-super-segura',
-        { expiresIn: '1h' }
+        { expiresIn: '5h' }
     );
     res.json({ token, usuario });
   } catch (error) {
@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
             const token = jwt.sign(
                 { id: usuario.id, nombre: usuario.nombre },
                 process.env.JWT_SECRET || 'contra-super-segura',
-                { expiresIn: '1h' }
+                { expiresIn: '5h' }
             );
             res.json({ token, usuario });
         } else {
