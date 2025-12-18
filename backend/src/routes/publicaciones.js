@@ -24,13 +24,13 @@ router.get('/', async (req, res) => {
         p.id, p.titulo, p.descripcion, p.fecha_publicacion, p.ubicacion, p.imagen_publicacion,
         m.nombre AS nombre_mascota,
         m.especie,
-        u.nombre_completo AS nombre_usuario
+        u.nombre AS nombre_usuario
       FROM publicaciones p
       JOIN mascotas m ON p.mascota_id = m.id
       JOIN usuarios u ON m.duenio_id = u.id
       ORDER BY p.id DESC
     `;
-    
+
     const resultado = await pool.query(query);
     res.json(resultado.rows);
   } catch (error) {
@@ -83,4 +83,27 @@ router.put('/like/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.get('/usuario/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const resultado = await pool.query(`
+            SELECT
+                p.id, p.titulo, p.descripcion, p.fecha_publicacion, p.ubicacion, p.imagen_publicacion,
+                m.nombre AS nombre_mascota,
+                m.especie,
+                u.nombre AS nombre_usuario
+            FROM publicaciones p
+                JOIN mascotas m ON p.mascota_id = m.id
+                JOIN usuarios u ON m.duenio_id = u.id
+            WHERE u.id = $1
+            ORDER BY p.id DESC
+        `, [id]);
+
+        res.json(resultado.rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;
