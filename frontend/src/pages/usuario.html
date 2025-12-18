@@ -89,7 +89,6 @@
                     <select id="mascotaEspecie" name="mascotaEspecie" required>
                         <option value="perro">Perro</option>
                         <option value="gato">Gato</option>
-                        <option value="ave">Ave</option>
                         <option value="otro">Otro</option>
                     </select>
                 </div>
@@ -111,7 +110,7 @@
                 </div>
                 <div class="form">
                     <label for="mascotaImagen">Imagen:</label>
-                    <input type="file" id="mascotaImagen" name="imagen_mascota">
+                    <input type="file" id="mascotaImagen" name="imagen_mascota" accept="image/*">
                 </div>
                 <button type="submit" class="botonSecundario">Guardar Mascota</button>
             </form>
@@ -161,7 +160,7 @@
                 </div>
                 <div class="form">
                     <label for="inputImagenUsuario">Imagen:</label>
-                    <input type="file" id="inputImagenUsuario" name="imagen_usuario">
+                    <input type="file" id="inputImagenUsuario" name="imagen_usuario" accept="image/*">
                 </div>
                 <button type="submit" class="botonSecundario">Guardar Cambios</button>
             </form>
@@ -183,7 +182,7 @@
                 </div>
                 <div class="form">
                     <label for="pubImagen">Imagen:</label>
-                    <input type="file" id="pubImagen" name="imagen_publicacion" accept="image/*">
+                    <input type="file" id="pubImagen" name="imagen_publicacion" accept="image/*" required>
                 </div>
                 <div class="form">
                     <label for="pubUbicacion">Ubicación:</label>
