@@ -285,7 +285,7 @@ function renderAmigos() {
 
 async function cargarMascotas() {
     try {
-        const res = await fetch(`${API_MASCOTAS}?duenio_id=${mostrarId}`, {
+        const res = await fetch(`${API_MASCOTAS}/usuario/${mostrarId}`, {
             headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         });
         mascotas = await res.json();
@@ -330,7 +330,7 @@ function renderMascotas() {
 
 async function cargarPublicaciones() {
     try {
-        const res = await fetch(`${API_PUBLICACIONES}?usuario_id=${mostrarId}`, {
+        const res = await fetch(`${API_PUBLICACIONES}/usuario/${mostrarId}`, {
             headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         });
         publicaciones = await res.json();
@@ -361,8 +361,7 @@ function renderPublicaciones() {
         div.className = 'publicacion';
         div.innerHTML = `
             ${esPerfilPropio ? '<button class="boton botonEliminar">🗑</button>' : ''}
-            <img src="${
-            p.imagen_publicacion ? `${BACKEND}/uploads/${p.imagen_publicacion}` : '../images/publicacion-ejemplo.jpg'}">
+            <img src="${BACKEND}/uploads/${p.imagen_publicacion}" alt="${p.titulo}">
             <h4>${p.titulo}</h4>
             <p>${p.descripcion}</p>
             <small>Ubicación: ${p.ubicacion}</small>
