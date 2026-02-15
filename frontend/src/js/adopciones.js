@@ -10,6 +10,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const botonesOpcion = document.querySelectorAll(".opcion");
   const modal = document.getElementById("modalUsuario");
   const modalContenido = document.getElementById("modalContenido");
+  const btnCrear = document.getElementById("btnCrearPublicacion");
+  const modalCrear = document.getElementById("modalCrearPublicacion");
+  const cerrarModalCrear = document.getElementById("cerrarModalCrear");
+  const selectMascota = document.getElementById("selectMascota");
+  const formCrear = document.getElementById("formCrearPublicacion");
 
   async function obtenerUsuarioActual() {
     const token = localStorage.getItem("token");
@@ -252,6 +257,85 @@ document.addEventListener("DOMContentLoaded", async () => {
       modal.style.display = "flex";
     }
   });
+
+btnCrear?.addEventListener("click", async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Debes iniciar sesión");
+    return;
+  }
+
+  modalCrear.style.display = "flex";
+
+  try {
+    const res = await fetch("http://localhost:3000/api/mascotas/mis-mascotas", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Error al traer mascotas");
+
+    const mascotas = await res.json();
+    selectMascota.innerHTML = '<option value="">Seleccioná una mascota...</option>';
+
+    mascotas.forEach(m => {
+      const option = document.createElement("option");
+      option.value = m.id;
+      option.textContent = m.nombre;
+      selectMascota.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error("Error cargando mascotas:", error);
+    selectMascota.innerHTML = '<option>Error al cargar mascotas</option>';
+  }
+});
+
+if (cerrarModalCrear) {
+  cerrarModalCrear.addEventListener('click', () => {
+    if (modalCrear) modalCrear.style.display = 'none';
+  });
+}
+
+formCrear?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Debes iniciar sesión");
+    return;
+  }
+
+  const formData = new FormData(formCrear);
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+    const res = await fetch("http://localhost:3000/api/publicaciones_adopciones", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      modalCrear.style.display = "none";
+
+      const publicaciones = await obtenerPublicaciones();
+
+      mostrarPublicaciones(publicaciones);
+    } else {
+      alert("Error al crear publicación");
+    }
+
+  } catch (error) {
+    console.error("Error al crear publicación:", error);
+    alert("No se pudo crear la publicación");
+  }
+});
+
 
   const publicaciones = await obtenerPublicaciones();
   const solicitudesMapa = await obtenerSolicitudesUsuario();

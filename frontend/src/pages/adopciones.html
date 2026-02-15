@@ -14,7 +14,7 @@
     <div class="nav-derecha">
       <a href="index.html">Inicio</a>
       <a href="adopciones.html" class="activo">Adopciones</a>
-      <a href="perfil.html">Usuario</a>
+      <a href="usuario.html">Usuario</a>
     </div>
   </nav>
 
@@ -22,12 +22,16 @@
     <header class="seccion-busqueda">
       <div class="contenido-busqueda">
         <h1>Encuentra a tu nuevo mejor amigo</h1>
-        <p>Explorá las mascotas disponibles para adopción 💕</p>
+        <p>Explorá las mascotas disponibles para adopción</p>
         <div class="buscador">
           <button id="botonVerMascotas" class="boton-ver-mascotas">Ver Mascotas</button>
         </div>
       </div>
     </header>
+
+    <div class="crear-publicacion">
+      <button class= "boton-abrir-crear" id="btnCrearPublicacion">+ Publicar Mascota en Adopción</button>
+    </div>
 
     <div id="ventanaMascotas" class="ventana">
       <div class="ventana-contenido">
@@ -72,6 +76,28 @@
 
     <section id="contenedorPublicaciones" class="publicaciones">
     </section>
+<div id="modalCrearPublicacion" class="modal-usuario">
+  <div class="modal-contenido">
+    <h2>Nueva publicación de adopción</h2>
+    <form id="formCrearPublicacion">
+      <select name="mascota_id" id="selectMascota" required>
+        <option value="">Seleccioná una mascota...</option>
+      </select>
+
+      <input type="text" name="titulo" placeholder="Título de la publicación" required>
+
+      <textarea name="descripcion" placeholder="Descripción" required></textarea>
+
+      <textarea name="requisitos" placeholder="Requisitos" required></textarea>
+
+      <input type="text" name="imagen_publicacion" placeholder="URL de imagen (opcional)">
+
+      <button type="submit">Publicar</button>
+      <button type="button" id="cerrarModalCrear">Cancelar</button>
+    </form>
+  </div>
+</div>
+
   </main>
   <footer class="footer">
     <p>© 2025 - PetConnect | Adopta una mascota y conviértelo en tu mejor amigo 🐾</p>

@@ -81,3 +81,18 @@ router.get('/usuario/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+router.get('/mis-mascotas', autenticar, async (req, res) => {
+  try {
+    const resultado = await pool.query(
+      'SELECT * FROM mascotas WHERE duenio_id = $1',
+      [req.user.id]
+    );
+
+    res.json(resultado.rows);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener mascotas' });
+  }
+});
