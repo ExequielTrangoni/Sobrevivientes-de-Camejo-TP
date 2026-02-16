@@ -73,7 +73,9 @@ router.patch('/:id/estado', autenticar, async (req, res) => {
             a.id AS solicitud_id,
             a.estado AS estado_actual,
             a.publicacion_adopciones_id,
+            a.adoptante_id,
             m.duenio_id,
+            m.id AS mascota_id,
             p.id AS pub_id
         FROM adopciones a
         LEFT JOIN publicaciones_adopciones p ON a.publicacion_adopciones_id = p.id
@@ -90,26 +92,27 @@ router.patch('/:id/estado', autenticar, async (req, res) => {
     const datos = info.rows[0];
 
     if (!datos.pub_id) {
-        console.error("Publicación asociada no encontrada (Huérfana)");
         return res.status(404).json({ error: 'La publicación asociada a esta solicitud ya no existe' });
     }
 
     if (datos.duenio_id !== req.user.id) {
       return res.status(403).json({ error: 'No tienes permiso: No eres el dueño de esta mascota' });
     }
-
     const actualizar = await pool.query(
         'UPDATE adopciones SET estado = $1 WHERE id = $2 RETURNING *', 
         [estado, id]
     );
 
     if (estado === 'aceptada') {
-        console.log(`Solicitud aceptada. Cerrando publicación ID: ${datos.pub_id}`);
+        console.log(`Solicitud aceptada. Transfiriendo mascota ${datos.mascota_id} al usuario ${datos.adoptante_id}`);
+        await pool.query(
+            "UPDATE mascotas SET duenio_id = $1 WHERE id = $2",
+            [datos.adoptante_id, datos.mascota_id]
+        );
         await pool.query(
             "UPDATE publicaciones_adopciones SET estado_mascota = 'adoptado' WHERE id = $1",
             [datos.pub_id]
         );
-        
         await pool.query(
             "UPDATE adopciones SET estado = 'rechazada' WHERE publicacion_adopciones_id = $1 AND id <> $2 AND estado = 'pendiente'",
             [datos.pub_id, id]

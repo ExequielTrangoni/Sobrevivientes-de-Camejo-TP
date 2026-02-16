@@ -2,6 +2,19 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const autenticar = require('../middlewares/autor');
+const multer = require('multer'); 
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage });
 
 router.get('/', autenticar, async (req, res) => {
   try {
@@ -71,8 +84,10 @@ router.get('/:id', autenticar, async (req, res) => {
   }
 });
 
-router.post('/', autenticar, async (req, res) => {
-  const { mascota_id, titulo, descripcion, requisitos, imagen_publicacion } = req.body;
+router.post('/', autenticar, upload.single('imagen_publicacion'), async (req, res) => {
+  const { mascota_id, titulo, descripcion, requisitos } = req.body;
+  const imagen_publicacion = req.file ? req.file.filename : null;
+
   if (!mascota_id || !titulo) {
     return res.status(400).json({ error: "Campos obligatorios: mascota_id y titulo" });
   }
@@ -94,7 +109,7 @@ router.post('/', autenticar, async (req, res) => {
       titulo,
       descripcion || null,
       requisitos || null,
-      imagen_publicacion || null
+      imagen_publicacion
     ];
 
     const resultado = await pool.query(query, valores);

@@ -338,42 +338,38 @@ if (cerrarModalCrear) {
 }
 
 formCrear?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Debes iniciar sesión");
-    return;
-  }
-
-  const formData = new FormData(formCrear);
-  const data = Object.fromEntries(formData.entries());
-
-  try {
-    const res = await fetch("http://localhost:3000/api/publicaciones_adopciones", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (res.ok) {
-      modalCrear.style.display = "none";
-
-      const publicaciones = await obtenerPublicaciones();
-
-      mostrarPublicaciones(publicaciones);
-    } else {
-      alert("Error al crear publicación");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Debes iniciar sesión");
+      return;
     }
+    const formData = new FormData(formCrear);
+    try {
+      const res = await fetch("http://localhost:3000/api/publicaciones_adopciones", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      });
+      if (res.ok) {
+        alert("Publicación creada con éxito");
+        modalCrear.style.display = "none";
+        formCrear.reset();
 
-  } catch (error) {
-    console.error("Error al crear publicación:", error);
-    alert("No se pudo crear la publicación");
-  }
-});
+        const publicaciones = await obtenerPublicaciones();
+        location.reload(); 
+      } else {
+        const errorData = await res.json();
+        alert(errorData.error || "Error al crear publicación");
+      }
+    } catch (error) {
+      console.error("Error al crear publicación:", error);
+      alert("No se pudo crear la publicación");
+    }
+  });
 
 
   const publicaciones = await obtenerPublicaciones();

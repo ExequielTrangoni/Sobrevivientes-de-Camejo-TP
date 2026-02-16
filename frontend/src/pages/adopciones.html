@@ -90,7 +90,8 @@
 
       <textarea name="requisitos" placeholder="Requisitos" required></textarea>
 
-      <input type="text" name="imagen_publicacion" placeholder="URL de imagen (opcional)">
+      <label for="inputImagen">Subir foto (Opcional):</label>
+      <input type="file" name="imagen_publicacion" id="inputImagen" accept="image/*">
 
       <button type="submit">Publicar</button>
       <button type="button" id="cerrarModalCrear">Cancelar</button>
