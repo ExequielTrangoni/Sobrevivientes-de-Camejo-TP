@@ -4,6 +4,7 @@ const pool = require('../db');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
+const autenticar = require('../middlewares/autor');
 
 const uploadDir = path.join(__dirname, '../../uploads');
 
@@ -168,6 +169,21 @@ router.delete('/:id/amigos/:amigoId', async (req, res) => {
             [usuarioId, amigoId]
         );
         res.json({ mensaje: 'Amigo eliminado correctamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/me', autenticar, async (req, res) => {
+    try {
+        const query = 'SELECT * FROM usuarios WHERE id = $1';
+        const resultado = await pool.query(query, [req.user.id]);
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        res.json(resultado.rows[0]);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

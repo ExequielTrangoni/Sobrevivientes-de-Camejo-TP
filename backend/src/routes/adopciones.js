@@ -11,8 +11,8 @@ router.get('/', autenticar, async (req, res) => {
       FROM adopciones a
       JOIN publicaciones_adopciones p ON a.publicacion_adopciones_id = p.id
       JOIN mascotas m ON p.mascota_id = m.id
-      ORDER BY a.fecha_solicitud DESC)
-    `,);
+      ORDER BY a.fecha_solicitud DESC
+    `);
     res.json(resultado.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -20,43 +20,38 @@ router.get('/', autenticar, async (req, res) => {
 });
 
 router.post('/', autenticar, async (req, res) => {
+  const { publicacion_adopciones_id, mensaje_solicitud } = req.body;
+  const adoptante_id = req.user.id;
+  if (!publicacion_adopciones_id) {
+    return res.status(400).json({ error: 'Falta el ID de la publicación' });
+  }
   try {
-    const { publicacion_adopciones_id } = req.body;
-    const adoptante_id = req.user.id;
-    if (!publicacion_adopciones_id) {
-      return res.status(400).json({ error: 'publicacion_adopciones_id es obligatorio' });
-    }
     const existe = await pool.query(
-      `SELECT 1 FROM adopciones WHERE publicacion_adopciones_id = $1 AND estado IN ('pendiente','aceptada') LIMIT 1`,
-      [publicacion_adopciones_id]
+      `SELECT 1 FROM adopciones 
+       WHERE publicacion_adopciones_id = $1 AND adoptante_id = $2`,
+      [publicacion_adopciones_id, adoptante_id]
     );
+
     if (existe.rowCount > 0) {
-      return res.status(400).json({ error: 'La mascota ya tiene una solicitud activa' });
+      return res.status(400).json({ error: 'Ya enviaste una solicitud para esta mascota' });
     }
     const query = `
-      INSERT INTO adopciones ( 
-        estado, 
-        mensaje_solicitud, 
+      INSERT INTO adopciones (
         publicacion_adopciones_id, 
-        adoptante_id
+        adoptante_id, 
+        mensaje_solicitud, 
+        estado
       )
-      VALUES ('pendiente', $1, $2, $3)
+      VALUES ($1, $2, $3, 'pendiente')
       RETURNING *
     `;
-    const { mensaje_solicitud } = req.body;
-    const valores = [
-      mensaje_solicitud || null, 
-      publicacion_adopciones_id, 
-      adoptante_id
-    ];
+    const valores = [publicacion_adopciones_id, adoptante_id, mensaje_solicitud || null];
+    
     const resultado = await pool.query(query, valores);
     res.status(201).json(resultado.rows[0]);
 
   } catch (error) {
     console.error(error);
-    if (error.code === '23503') {
-      return res.status(400).json({ error: "publicacion_id o adoptante_id no existen" });
-    }
     res.status(500).json({ error: 'Error al crear la adopción' });
   }
 });
@@ -128,6 +123,25 @@ router.delete('/:id', autenticar, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error eliminando solicitud' });
+  }
+});
+
+router.get('/usuario/:id', autenticar, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const query = `
+      SELECT a.*, p.titulo AS publicacion_titulo, m.nombre AS nombre_mascota, m.imagen_mascota
+      FROM adopciones a
+      JOIN publicaciones_adopciones p ON a.publicacion_adopciones_id = p.id
+      JOIN mascotas m ON p.mascota_id = m.id
+      WHERE a.adoptante_id = $1
+      ORDER BY a.fecha_solicitud DESC
+    `;
+    const resultado = await pool.query(query, [id]);
+    res.json(resultado.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener tus solicitudes' });
   }
 });
 

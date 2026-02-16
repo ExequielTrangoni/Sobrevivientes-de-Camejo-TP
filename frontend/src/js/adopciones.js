@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!token) return null;
     
     try {
-      const resultado = await fetch("http://localhost:3000/api/autor/me", {
+      const resultado = await fetch("http://localhost:3000/api/usuarios/me", {
         headers: { "Authorization": `Bearer ${token}` }
       });
 
@@ -56,43 +56,64 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  async function obtenerSolicitudesUsuario() {
-    if (!usuarioActual) return [];
+async function obtenerSolicitudesUsuario() {
+    if (!usuarioActual) return {};
+    const token = localStorage.getItem("token");
+
     try {
-      const res = await fetch(`${API_ADOPCIONES}/usuario/${usuarioActual.id}`);
-      if (!res.ok) return [];
-      const data =  await res.json();
+      const res = await fetch(`${API_ADOPCIONES}/usuario/${usuarioActual.id}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+      });
+      
+      if (!res.ok) return {};
+      
+      const data = await res.json();
       const mapa = {};
       data.forEach(solicitud => {
         mapa[solicitud.publicacion_adopciones_id] = solicitud;
       });
       return mapa;
-    } catch {
-      return [];
+    } catch (e) {
+      console.error(e);
+      return {};
     }
   }
 
-  async function crearSolicitud(publicacion_adopciones_id) {
-
+async function crearSolicitud(idPublicacion, mensaje) {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Debes iniciar sesión para adoptar");
       return null;
     }
+    const bodyData = {
+        publicacion_adopciones_id: idPublicacion,
+        mensaje_solicitud: mensaje || "Estoy interesado en adoptar a esta mascota"
+    };
 
-    const res = await fetch(API_ADOPCIONES, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        publicacion_adopciones_id,
-        mensaje_solicitud: "Quiero adoptar esta mascota",
-      })
-    });
+    try {
+        const res = await fetch(API_ADOPCIONES, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(bodyData)
+        });
 
-    return await res.json();
+        if (!res.ok) {
+            const errorData = await res.json();
+            alert(errorData.error || "Error al enviar solicitud");
+            return null;
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error(error);
+        alert("Error de conexión");
+        return null;
+    }
   }
 
   async function actualizarSolicitud(id, estado) {
@@ -196,12 +217,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       else if (pub.estado_mascota === "no-adoptado") {
         const boton = document.createElement("button");
         boton.textContent = "Adoptar";
+        boton.className = "boton-adoptar";
         boton.addEventListener("click", async () => {
-          await crearSolicitud(pub.publicacion_adopciones_id);
-          const nuevasSolicitudes = await obtenerSolicitudesUsuario();
-          mostrarPublicaciones(publicaciones, nuevasSolicitudes);
+            const mensaje = prompt("Escribe un mensaje al dueño (opcional):");
+            await crearSolicitud(pub.publicacion_adopciones_id, mensaje);
+            const nuevasSolicitudes = await obtenerSolicitudesUsuario();
+            mostrarPublicaciones(publicaciones, nuevasSolicitudes); 
         });
-        acciones.appendChild(boton);
+      acciones.appendChild(boton);
       }
       else {
         acciones.innerHTML = `<p>🐾 Adoptado</p>`;
