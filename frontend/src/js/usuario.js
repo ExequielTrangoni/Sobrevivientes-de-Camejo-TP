@@ -2,6 +2,8 @@ const API_USUARIO = "http://localhost:3000/api/usuarios";
 const API_MASCOTAS = "http://localhost:3000/api/mascotas";
 const API_PUBLICACIONES = "http://localhost:3000/api/publicaciones";
 const BACKEND = "http://localhost:3000";
+const API_URL = "http://localhost:3000/api";
+const RUTA_FOTOS = "http://localhost:3000/uploads/";
 
 
 let usuario = {};
@@ -642,3 +644,123 @@ async function initPerfil() {
         alert("Ocurrió un error al cargar los datos del perfil.");
     }
 }
+function getAuthHeaders() {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    };
+}
+
+async function cargarSolicitudes() {
+    const contenedor = document.getElementById("contenedorSolicitudes");
+    if (!contenedor) return;
+
+    const headers = getAuthHeaders();
+    if (!headers) {
+        contenedor.innerHTML = "<p>Debes iniciar sesión para ver esto.</p>";
+        return;
+    }
+
+    try {
+        const req = await fetch(`${API_URL}/adopciones/recibidas`, { headers });
+        
+        if (!req.ok) throw new Error("Error al cargar");
+
+        const data = await req.json();
+        
+        if (data.length === 0) {
+            contenedor.innerHTML = "<p>Nadie envió solicitudes todavía.</p>";
+        } else {
+            pintarSolicitudes(data, contenedor);
+        }
+
+    } catch (err) {
+        console.error(err);
+        contenedor.innerHTML = "<p>Error de conexión al cargar solicitudes.</p>";
+    }
+}
+
+function pintarSolicitudes(lista, contenedor) {
+    contenedor.innerHTML = "";
+
+    lista.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "tarjeta-solicitud";
+
+        const fotoPerfil = item.imagen_adoptante ? RUTA_FOTOS + item.imagen_adoptante :'../images/foto-perfil.jpg';
+
+        let accionesHtml = '';
+        if (item.estado === 'pendiente') {
+            accionesHtml = `
+                <div class="acciones-soli">
+                    <button class="btn-aceptar" data-id="${item.solicitud_id}" data-accion="aceptada">Aceptar</button>
+                    <button class="btn-rechazar" data-id="${item.solicitud_id}" data-accion="rechazada">Rechazar</button>
+                </div>
+            `;
+        } else {
+            accionesHtml = `<p class="estado-lbl">Estado: <b>${item.estado.toUpperCase()}</b></p>`;
+        }
+
+        div.innerHTML = `
+            <div class="soli-header">
+                <img src="${fotoPerfil}" alt="Foto perfil" class="foto-adoptante">
+                <div class="soli-info">
+                    <h4>${item.nombre_adoptante}</h4>
+                    <span>Interesado en: <b>${item.nombre_mascota}</b></span>
+                </div>
+            </div>
+            <div class="soli-body">
+                <p>"${item.mensaje_solicitud || ''}"</p>
+                <div class="contacto-info">
+                    <span>${item.email_adoptante}</span>
+                    <span>${item.telefono_adoptante}</span>
+                </div>
+                <small class="fecha">${new Date(item.fecha_solicitud).toLocaleDateString()}</small>
+            </div>
+            ${accionesHtml}
+        `;
+
+        contenedor.appendChild(div);
+    });
+}
+
+async function manejarAccionSolicitud(id, accion) {
+    if (!confirm(`¿Confirmás que querés ${accion === 'aceptada' ? 'aceptar' : 'rechazar'} esta solicitud?`)) return;
+
+    const headers = getAuthHeaders();
+    
+    try {
+        const res = await fetch(`${API_URL}/adopciones/${id}/estado`, {
+            method: "PATCH",
+            headers: headers,
+            body: JSON.stringify({ estado: accion })
+        });
+
+        if (res.ok) {
+            alert(`Solicitud ${accion} correctamente.`);
+            cargarSolicitudes();
+        } else {
+            const err = await res.json();
+            alert(err.error || "Error al actualizar.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error de red.");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    cargarSolicitudes();
+    const contenedor = document.getElementById("contenedorSolicitudes");
+    
+    if (contenedor) {
+        contenedor.addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON" && e.target.dataset.id) {
+                const { id, accion } = e.target.dataset;
+                manejarAccionSolicitud(id, accion);
+            }
+        });
+    }
+});
