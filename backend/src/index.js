@@ -14,7 +14,11 @@ const rutasMascotas = require('./routes/mascotas');
 const rutasAdopciones = require('./routes/adopciones');
 const rutasUsuarios = require('./routes/usuarios');
 const rutasPublicaciones = require('./routes/publicaciones');
+const rutasAutor = require('./middlewares/autor');
+const rutasPublicacionesAdopciones = require('./routes/publicaciones_adopciones');
 
+app.use('/api/autor', rutasAutor);
+app.use('/api/publicaciones_adopciones', rutasPublicacionesAdopciones);
 app.use('/api/mascotas', rutasMascotas);
 app.use('/api/adopciones', rutasAdopciones);
 app.use('/api/usuarios', rutasUsuarios);

@@ -44,6 +44,8 @@ CREATE TABLE amigos (
     fecha TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TYPE estado_mascota_enum AS ENUM ('no-adoptado', 'pendiente', 'adoptado');
+
 CREATE TABLE publicaciones_adopciones (
     id SERIAL PRIMARY KEY,
     mascota_id INT NOT NULL REFERENCES mascotas(id) ON DELETE CASCADE,
@@ -51,7 +53,7 @@ CREATE TABLE publicaciones_adopciones (
     descripcion TEXT,
     requisitos TEXT,
     imagen_publicacion VARCHAR(250),
-    estado_mascota ENUM('no-adoptado','pendiente','adoptado') DEFAULT 'no-adoptado',
+    estado_mascota estado_mascota_enum DEFAULT 'no-adoptado',
     fecha_publicacion DATE DEFAULT CURRENT_DATE
 );
 

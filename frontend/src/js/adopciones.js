@@ -32,12 +32,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-
   const usuarioActual = await obtenerUsuarioActual();
 
   async function obtenerPublicaciones() {
-    const res = await fetch(API_PUBLICACIONES);
-    return await res.json();
+    const token = localStorage.getItem("token");
+    const headers = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    try {
+      const res = await fetch(API_PUBLICACIONES, {
+        method: "GET",
+        headers: headers
+      });
+      if (!res.ok) {
+        console.warn("No se pudo obtener las publicaciones (Status:", res.status, ")");
+        return []; 
+      }
+      return await res.json();
+    } catch (error) {
+      console.error("Error de conexión:", error);
+      return [];
+    }
   }
 
   async function obtenerSolicitudesUsuario() {
