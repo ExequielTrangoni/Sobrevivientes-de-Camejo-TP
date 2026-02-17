@@ -7,10 +7,10 @@ const RUTA_FOTOS = "http://localhost:3000/uploads/";
 
 
 let usuario = {};
-let amigos = {};
-let mascotas = {};
-let publicaciones = {};
-let solicitudes = {};
+let amigos = [];
+let mascotas = [];
+let publicaciones = [];
+let solicitudes = [];
 
 const listaAmigos = document.getElementById("listaAmigos");
 const galeriaMascotas = document.getElementById("galeriaMascotas");

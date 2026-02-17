@@ -19,7 +19,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 router.get('/', async (req, res) => {
   try {
     const resultado = await pool.query('SELECT * FROM usuarios');
@@ -27,6 +26,21 @@ router.get('/', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+router.get('/me', autenticar, async (req, res) => {
+    try {
+        const query = 'SELECT * FROM usuarios WHERE id = $1';
+        const resultado = await pool.query(query, [req.user.id]);
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        res.json(resultado.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 router.post('/registro', async (req, res) => {
@@ -51,7 +65,7 @@ router.post('/registro', async (req, res) => {
     res.json({ token, usuario });
   } catch (error) {
     if (error.code === '23505') {
-      return res.status(400).json({ error: 'El email ya está registrado. Por favor usá otro.' });
+      return res.status(400).json({ error: 'El email ya está registrado.' });
     }
     res.status(500).json({ error: error.message });
   }
@@ -174,21 +188,6 @@ router.delete('/:id/amigos/:amigoId', async (req, res) => {
     }
 });
 
-router.get('/me', autenticar, async (req, res) => {
-    try {
-        const query = 'SELECT * FROM usuarios WHERE id = $1';
-        const resultado = await pool.query(query, [req.user.id]);
-
-        if (resultado.rows.length === 0) {
-            return res.status(404).json({ error: 'Usuario no encontrado' });
-        }
-
-        res.json(resultado.rows[0]);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
 router.put('/:id', upload.single('imagen_usuario'), async (req, res) => {
     const { id } = req.params;
 
@@ -217,10 +216,10 @@ router.put('/:id', upload.single('imagen_usuario'), async (req, res) => {
     }
 });
 
-
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     if (!/^\d+$/.test(id)) {
+
         return res.status(400).json({ error: 'ID inválido, debe ser un número' });
     }
     try {

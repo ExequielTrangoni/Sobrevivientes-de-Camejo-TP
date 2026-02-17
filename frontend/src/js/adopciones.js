@@ -310,6 +310,13 @@ async function crearSolicitud(idPublicacion, mensaje) {
       document.getElementById("modalTelefono").textContent = usuario.telefono;
       document.getElementById("modalDireccion").textContent = usuario.direccion;
 
+      const btnPerfil = document.getElementById("btnVerPerfilCompleto");
+      if (btnPerfil) {
+          btnPerfil.onclick = () => {
+              window.location.href = `usuario.html?usuarioId=${userId}`;
+          };
+      }
+
       modal.style.display = "flex";
     }
   });
