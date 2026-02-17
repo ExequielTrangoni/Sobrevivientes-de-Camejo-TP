@@ -134,6 +134,7 @@ async function crearSolicitud(idPublicacion, mensaje) {
 
   async function mostrarPublicaciones(publicaciones, solicitudesMapa = {}) {
     contenedor.innerHTML = "";
+    const URL_IMAGENES = "http://localhost:3000/uploads/";
 
     for (const pub of publicaciones) {
 
@@ -142,17 +143,28 @@ async function crearSolicitud(idPublicacion, mensaje) {
       const div = document.createElement("div");
       div.classList.add("publicacion");
        
-      let img = '../images/imagen-otro.jpg';
-      if (pub.especie.toLowerCase() === 'perro') img = '../images/imagen-perro.jpg';
-      else if (pub.especie.toLowerCase() === 'gato') img = '../images/imagen-gato.jpg';
+      let imgSrc;
+
+      if (pub.imagen_publicacion && pub.imagen_publicacion !== "null") {
+          imgSrc = URL_IMAGENES + pub.imagen_publicacion;
+      } 
+      else if (pub.imagen_mascota && pub.imagen_mascota !== "null") {
+          imgSrc = URL_IMAGENES + pub.imagen_mascota;
+      } 
+      else {
+          const especie = (pub.especie || 'otro').toLowerCase();
+          if (especie === 'perro') imgSrc = '../images/imagen-perro.jpg';
+          else if (especie === 'gato') imgSrc = '../images/imagen-gato.jpg';
+          else imgSrc = '../images/publicacion-ejemplo.jpg';
+      }
 
       let emoji = '🐾';
-      if (pub.especie.toLowerCase() === 'perro') emoji = '🐶';
-      else if (pub.especie.toLowerCase() === 'gato') emoji = '🐱';
+      if (pub.especie && pub.especie.toLowerCase() === 'perro') emoji = '🐶';
+      else if (pub.especie && pub.especie.toLowerCase() === 'gato') emoji = '🐱';
 
 
       div.innerHTML = `
-        <img src="${pub.imagen_publicacion || pub.imagen_mascota  || img}" class="img">
+        <img src="${imgSrc}" class="img" onerror="this.onerror=null;this.src='../images/publicacion-ejemplo.jpg';">
         <h3>${emoji} ${pub.nombre_mascota} busca hogar</h3>
         <p><strong>Descripción:</strong> ${pub.descripcion}</p>
         <p><strong>Requisitos:</strong> ${pub.requisitos}</p>
@@ -176,15 +188,15 @@ async function crearSolicitud(idPublicacion, mensaje) {
         if (solicitud.adoptante_id === usuarioActual.id) {
 
           if (solicitud.estado === "pendiente") {
-            acciones.innerHTML = `<p>⏳ Tu solicitud está pendiente</p>`;
+            acciones.innerHTML = `<p>Tu solicitud está pendiente</p>`;
           }
 
           if (solicitud.estado === "aceptada") {
-            acciones.innerHTML = `<p>🥳 ¡Fuiste aceptado!</p>`;
+            acciones.innerHTML = `<p>¡Fuiste aceptado!</p>`;
           }
 
           if (solicitud.estado === "rechazada") {
-            acciones.innerHTML = `<p>❌ Tu solicitud fue rechazada</p>`;
+            acciones.innerHTML = `<p>Tu solicitud fue rechazada</p>`;
           }
         }
         else if (usuarioActual.id === pub.usuario_id && solicitud.estado === "pendiente") {
@@ -280,16 +292,21 @@ async function crearSolicitud(idPublicacion, mensaje) {
 
       const pub = publicaciones.find(p => p.publicacion_adopciones_id == publicacionId);
       const especie = (pub.especie || 'otro').toLowerCase();
-      const img = especie === 'perro' ? '../images/imagen-perro.jpg' : especie === 'gato' ? '../images/imagen-gato.jpg' : '../images/imagen-otro.jpg';
+      const img = especie === 'perro' ? '../images/imagen-perro.jpg' : especie === 'gato' ? '../images/imagen-gato.jpg' : '../images/publicacion-ejemplo.jpg';
 
-      document.getElementById("modalImgMascota").src = pub.imagen_mascota || img;
+      const URL_IMAGENES = "http://localhost:3000/uploads/";
+      let imgSrcModal = img;
+      if (pub.imagen_mascota && pub.imagen_mascota !== "null") {
+          imgSrcModal = URL_IMAGENES + pub.imagen_mascota;
+      }
+      document.getElementById("modalImgMascota").src = imgSrcModal;
       document.getElementById("modalNombreMascota").textContent = pub.nombre_mascota;
       document.getElementById("modalRaza").textContent = pub.raza;
       document.getElementById("modalEdad").textContent = pub.edad + " años";
       document.getElementById("modalTamano").textContent = pub.tamanio;
 
-      document.getElementById("modalImgUsuario").src = usuario.imagen_usuario || '../images/imagen-usuario.jpg';
-      document.getElementById("modalUsuarioNombre").textContent = usuario.nombre_completo;
+      document.getElementById("modalImgUsuario").src = usuario.imagen_usuario ? (URL_IMAGENES + usuario.imagen_usuario) : '../images/imagen-usuario.jpg';
+      document.getElementById("modalUsuarioNombre").textContent = usuario.nombre_completo || usuario.nombre;
       document.getElementById("modalTelefono").textContent = usuario.telefono;
       document.getElementById("modalDireccion").textContent = usuario.direccion;
 
@@ -376,3 +393,24 @@ formCrear?.addEventListener("submit", async (e) => {
   const solicitudesMapa = await obtenerSolicitudesUsuario();
   mostrarPublicaciones(publicaciones, solicitudesMapa);
 });
+
+const btnLogout = document.getElementById('btn-logout');
+const btnLogin = document.getElementById('btn-login');
+
+if (btnLogout) {
+    btnLogout.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('usuarioId');
+        alert('Sesión cerrada correctamente');
+        window.location.reload();
+    });
+}
+
+const usuarioLogueado = localStorage.getItem('usuarioId');
+if (!usuarioLogueado && btnLogout) {
+    btnLogout.style.display = 'none';
+}
+
+if (usuarioLogueado && btnLogin) {
+    btnLogin.style.display = 'none';
+}

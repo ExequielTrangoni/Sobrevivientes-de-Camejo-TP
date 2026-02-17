@@ -176,7 +176,7 @@ if (btnLogout) {
     btnLogout.addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('usuarioId');
-        alert('Sesión cerrada correctamente 👋');
+        alert('Sesión cerrada correctamente');
         window.location.reload();
     });
 }

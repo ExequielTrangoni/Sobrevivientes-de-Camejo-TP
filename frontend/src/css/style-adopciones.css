@@ -93,6 +93,7 @@ main {
 .boton-ver-mascotas,
 .boton-adoptar,
 .opciones button,
+.boton-abrir-crear,
 .cerrar {
   border: none;
   border-radius: 10px;
@@ -100,14 +101,20 @@ main {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.boton-ver-mascotas {
+.boton-ver-mascotas,
+.boton-abrir-crear{
   background: var(--accent);
   color: white;
   padding: 12px 25px;
   font-size: 18px;
+  display: block;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.boton-ver-mascotas:hover {
+.boton-ver-mascotas:hover,
+.boton-abrir-crear:hover{
   background: #45a049;
 }
 
@@ -189,31 +196,38 @@ main {
   border-radius: 0;
 }
 
-.publicaciones {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .publicacion {
   display: flex;
-  justify-content: stretch;
-  align-items: stretch;
+  flex-direction: column;
   position: relative;
   width: 100%;
-  max-width: 1000px;
-  border: 10px solid var(--accent);
+  max-width: 500px;
+  border: 5px solid var(--accent);
   border-radius: 15px;
   background: var(--card-bg);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
-  min-height: 350px;
   overflow: hidden;
 }
 
-.publicacion:hover {
-  transform: scale(1.01);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+.publicacion .img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 5px solid var(--accent);
+}
+
+.publicacion h3, 
+.publicacion p, 
+.publicacion .acciones {
+  padding: 0 15px;
+  text-align: center;
+}
+
+.publicacion h3 {
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 
 .tarjeta-lado-izquierdo {
@@ -221,24 +235,6 @@ main {
   display: flex;
   flex-direction: column;
   background: white;
-}
-
-.imagen-publicacion {
-  width: 100%;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-
-.imagen-publicacion img {
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  display: block;
 }
 
 .separador-horizontal {
