@@ -234,7 +234,7 @@ function manejarBotonAmistad(boton, estado) {
                 const estado = await obtenerEstadoAmistad();
                 manejarBotonAmistad(boton, estado);
 
-                await cargarSolicitudes();
+                await cargarSolicitudesAmistad();
                 await cargarAmigos();
             };
             break;
@@ -464,7 +464,7 @@ function linkPerfil(id, nombre) {
     return `<a href="usuario.html?usuarioId=${id}" class="enlace-perfil">${nombre}</a>`;
 }
 
-async function cargarSolicitudes() {
+async function cargarSolicitudesAmistad() {
     try {
         const token = localStorage.getItem('token');
         const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -514,14 +514,14 @@ function renderSolicitudes() {
             li.querySelector('.aceptarBoton').addEventListener('click', async () => {
                 if (!confirm(`¿Seguro que deseas aceptar a ${solicitud.nombre}?`)) return;
                 await aceptarSolicitud(solicitud.id);
-                await cargarSolicitudes();
+                await cargarSolicitudesAmistad();
                 await cargarAmigos();
             });
 
             li.querySelector('.rechazarBoton').addEventListener('click', async () => {
                 if (!confirm(`¿Seguro que deseas rechazar a ${solicitud.nombre}?`)) return;
                 await rechazarSolicitud(solicitud.id);
-                await cargarSolicitudes();
+                await cargarSolicitudesAmistad();
                 await cargarAmigos();
             });
 
@@ -552,7 +552,7 @@ async function aceptarSolicitud(remitenteId) {
             return;
         }
 
-        await cargarSolicitudes();
+        await cargarSolicitudesAmistad();
         await cargarAmigos();
 
         const boton = document.getElementById("botonAgregarAmigo");
@@ -581,7 +581,7 @@ async function rechazarSolicitud(remitenteId) {
             alert('Error al rechazar solicitud');
             return;
         }
-        await cargarSolicitudes();
+        await cargarSolicitudesAmistad();
         await cargarAmigos();
 
         const boton = document.getElementById("botonAgregarAmigo");
@@ -637,7 +637,7 @@ async function initPerfil() {
         await cargarAmigos();
         await cargarMascotas();
         await cargarPublicaciones();
-        await cargarSolicitudes();
+        await cargarSolicitudesAmistad();
         actualizarTotales();
     } catch (err) {
         console.error("Error inicializando la página:", err);
@@ -653,7 +653,7 @@ function getAuthHeaders() {
     };
 }
 
-async function cargarSolicitudes() {
+async function cargarSolicitudesAdopcion() {
     const contenedor = document.getElementById("contenedorSolicitudes");
     if (!contenedor) return;
 
@@ -695,8 +695,8 @@ function pintarSolicitudes(lista, contenedor) {
         if (item.estado === 'pendiente') {
             accionesHtml = `
                 <div class="acciones-soli">
-                    <button class="btn-aceptar" data-id="${item.solicitud_id}" data-accion="aceptada">Aceptar</button>
-                    <button class="btn-rechazar" data-id="${item.solicitud_id}" data-accion="rechazada">Rechazar</button>
+                    <button class="boton botonSecundario aceptarBoton" data-id="${item.solicitud_id}" data-accion="aceptada">Aceptar</button>
+                    <button class="boton botonEliminar rechazarBoton" data-id="${item.solicitud_id}" data-accion="rechazada">Rechazar</button>
                 </div>
             `;
         } else {
@@ -740,7 +740,7 @@ async function manejarAccionSolicitud(id, accion) {
 
         if (res.ok) {
             alert(`Solicitud ${accion} correctamente.`);
-            cargarSolicitudes();
+            cargarSolicitudesAdopcion();
         } else {
             const err = await res.json();
             alert(err.error || "Error al actualizar.");
@@ -752,7 +752,7 @@ async function manejarAccionSolicitud(id, accion) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    cargarSolicitudes();
+    cargarSolicitudesAdopcion();
     const contenedor = document.getElementById("contenedorSolicitudes");
     
     if (contenedor) {
