@@ -695,8 +695,8 @@ function pintarSolicitudes(lista, contenedor) {
         if (item.estado === 'pendiente') {
             accionesHtml = `
                 <div class="acciones-soli">
-                    <button class="btn-aceptar" data-id="${item.solicitud_id}" data-accion="aceptada">Aceptar</button>
-                    <button class="btn-rechazar" data-id="${item.solicitud_id}" data-accion="rechazada">Rechazar</button>
+                    <button class="boton botonSecundario aceptarBoton" data-id="${item.solicitud_id}" data-accion="aceptada">Aceptar</button>
+                    <button class="boton botonEliminar rechazarBoton" data-id="${item.solicitud_id}" data-accion="rechazada">Rechazar</button>
                 </div>
             `;
         } else {
