@@ -232,6 +232,7 @@ async function crearSolicitud(idPublicacion, mensaje) {
         boton.className = "boton-adoptar";
         boton.addEventListener("click", async () => {
             const mensaje = prompt("Escribe un mensaje al dueño (opcional):");
+            if (mensaje === null) {return;}
             await crearSolicitud(pub.publicacion_adopciones_id, mensaje);
             const nuevasSolicitudes = await obtenerSolicitudesUsuario();
             mostrarPublicaciones(publicaciones, nuevasSolicitudes); 
