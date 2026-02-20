@@ -3,7 +3,6 @@ const router = express.Router();
 const pool = require('../db');
 const autenticar = require('../middlewares/autor');
 const path = require('path');
-const autenticar = require('../middlewares/autor');
 const upload = require('../middlewares/upload');
 
 router.get('/', async (req, res) => {
