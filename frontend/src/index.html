@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetConnect - Inicio</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
 
 </head>
 <body>
@@ -12,11 +12,11 @@
         <a href="index.html" class="logo">🐾 PetConnect</a>
         <nav>
             <ul>
-                <li><a href="./index.html">Inicio</a></li>
-                <li><a href="./adopciones.html">Adopciones</a></li>
-                <li><a href="./usuario.html">Usuario</a></li>
+                <li><a href="./pages/index.html">Inicio</a></li>
+                <li><a href="./pages/adopciones.html">Adopciones</a></li>
+                <li><a href="./pages/usuario.html">Usuario</a></li>
                 <li><a href="#" id="btn-logout" class="boton-sesion">Cerrar Sesión</a></li>
-                <li><a href="./login.html" id="btn-login" class="boton-sesion">Iniciar Sesión</a></li>
+                <li><a href="./pages/login.html" id="btn-login" class="boton-sesion">Iniciar Sesión</a></li>
             </ul>
         </nav>
     </header>
@@ -24,7 +24,7 @@
     <section class="inicio-titulo">
         <h2>Encontrá a tu compañero de vida!</h2>
         <p>Conecta con mascotas que necesitan amor y cariño</p>
-        <button class="boton-ver-mascotas" onclick="window.location.href='./adopciones.html'">Ver Mascotas</button>
+        <button class="boton-ver-mascotas" onclick="window.location.href='./pages/adopciones.html'">Ver Mascotas</button>
         <!-- <button class="boton-ver-refugios" >Ver Refugios</button> -->
     </section>
 
@@ -43,7 +43,7 @@
     <div id="modal-crear" class="modal">
         <div class="contenido-modal">
             <span class="cerrar-modal" id="cerrar-modal-publicacion">&times;</span>
-            <h3>Nueva Publicación 🐾</h3>
+            <h3>Nueva Publicación</h3>
             <form id="form-publicacion" class="form-estilo">
                 <label for="input-titulo">Título</label>
                 <input type="text" id="input-titulo" placeholder="Ej: Perro busca casa" required>
@@ -70,7 +70,7 @@
             <p class="texto-advertencia">
                 Necesitas iniciar sesión para subir una publicación.
             </p>
-            <a href="./login.html" class="btn-publicar">
+            <a href="./pages/login.html" class="btn-publicar">
                 Ir a Iniciar Sesión
             </a>
         </div>
@@ -80,6 +80,6 @@
         <p>© 2025 PetConnect | Con amor para los animales 🐾</p>
     </footer>
 
-<script src="../js/main.js"></script>
+<script src="./js/main.js"></script>
 </body>
 </html>

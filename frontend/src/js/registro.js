@@ -29,7 +29,7 @@ formRegistro.addEventListener('submit', async (e) => {
             localStorage.setItem('usuario', JSON.stringify(data.usuario));
             localStorage.setItem('usuarioId', data.usuario.id);
             alert(`¡Bienvenido de nuevo, ${data.usuario.nombre}!`);
-            window.location.href = './index.html';
+            window.location.href = '../index.html';
         
         } else {
             const errorData = await respuesta.json();
