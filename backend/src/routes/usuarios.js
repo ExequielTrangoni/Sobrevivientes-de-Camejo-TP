@@ -4,7 +4,6 @@ const pool = require('../db');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const autenticar = require('../middlewares/autor');
-const autenticar = require('../middlewares/autor');
 const upload = require('../middlewares/upload');
 
 router.get('/', async (req, res) => {
