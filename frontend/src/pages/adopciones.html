@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PetConnect - Adopciones</title>
+  <link rel="stylesheet" href="../css/style-adopciones.css" />
+</head>
+<body>
+  <nav class="barra-navegacion">
+    <div class="nav-izquierda">
+      <h1>🐾 PetConnect</h1>
+    </div>
+    <div class="nav-derecha">
+      <a href="index.html">Inicio</a>
+      <a href="adopciones.html" class="activo">Adopciones</a>
+      <a href="usuario.html">Usuario</a>
+      <a href="#" id="btn-logout" class="boton-sesion">Cerrar Sesión</a>
+      <a href="./login.html" id="btn-login" class="boton-sesion">Iniciar Sesión</a>
+    </div>
+  </nav>
+
+  <main class="fondo-principal">
+    <header class="seccion-busqueda">
+      <div class="contenido-busqueda">
+        <h1>Encuentra a tu nuevo mejor amigo</h1>
+        <p>Explorá las mascotas disponibles para adopción</p>
+        <div class="buscador">
+          <button id="botonVerMascotas" class="boton-ver-mascotas">Ver Mascotas</button>
+        </div>
+        <div class="crear-publicacion">
+          <button class= "boton-abrir-crear" id="btnCrearPublicacion">Publicar Mascota en Adopción</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="ventanaMascotas" class="ventana">
+      <div class="ventana-contenido">
+        <h2>Selecciona una categoría</h2>
+        <div class="opciones">
+          <button class="opcion">🐶 Perro</button>
+          <button class="opcion">🐱 Gato</button>
+          <button class="opcion">🐾 Otro</button>
+        </div>
+        <button id="cerrarVentana" class="cerrar">Cerrar</button>
+      </div>
+    </div>
+
+    <div id="modalUsuario" class="modal-usuario">
+      <div class="modal-contenido" id="modalContenido">
+        <div class="modal-superior">
+            <div class="modal-columna-img">
+              <img id="modalImgMascota" src="" alt="Mascota">
+            </div>
+            <div class="modal-columna-info">
+              <h2 id="modalNombreMascota"></h2>
+              <p><strong>Raza:</strong> <span id="modalRaza"></span></p>
+              <p><strong>Edad:</strong> <span id="modalEdad"></span></p>
+              <p><strong>Tamaño:</strong> <span id="modalTamano"></span></p>
+            </div>
+        </div>
+
+        <div class="separador-modal"></div>
+
+        <div class="modal-inferior">
+          <div class="modal-columna-img">
+            <img id="modalImgUsuario" alt="Usuario">
+          </div>
+          <div class="modal-columna-info">
+              <h2 id="modalUsuarioNombre"></h2>
+              <p><strong>Teléfono:</strong> <span id="modalTelefono"></span></p>
+              <p><strong>Dirección:</strong> <span id="modalDireccion"></span></p>
+              <button id="btnVerPerfilCompleto" class="boton-ver-perfil">
+                  Ver Perfil Completo
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="contenedorPublicaciones" class="publicaciones">
+    </section>
+<div id="modalCrearPublicacion" class="modal-usuario">
+  <div class="modal-contenido">
+    <h2>Nueva publicación de adopción</h2>
+    <form id="formCrearPublicacion">
+      <select name="mascota_id" id="selectMascota" required>
+        <option value="">Seleccioná una mascota...</option>
+      </select>
+
+      <input type="text" name="titulo" placeholder="Título de la publicación" required>
+
+      <textarea name="descripcion" placeholder="Descripción" required></textarea>
+
+      <textarea name="requisitos" placeholder="Requisitos" required></textarea>
+
+      <label for="inputImagen">Subir foto (Opcional):</label>
+      <input type="file" name="imagen_publicacion" id="inputImagen" accept="image/*">
+
+      <button type="submit">Publicar</button>
+      <button type="button" id="cerrarModalCrear">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+  </main>
+  <footer class="footer">
+    <p>© 2025 - PetConnect | Adopta una mascota y conviértelo en tu mejor amigo 🐾</p>
+  </footer>
+  <script src="../js/adopciones.js" defer></script>
+</body>
+</html>

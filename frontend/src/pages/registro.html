@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetConnect - Iniciar Sesión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">🐾 PetConnect</a>
+        <nav>
+            <ul>
+                <li><a href="./index.html">Inicio</a></li>
+                <li><a href="./adopciones.html">Adopciones</a></li>
+                <li><a href="./login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="contenedor-login">
+        <div class="tarjeta-login">
+            <h2 class="titulo-login">Bienvenido</h2>
+            
+            <form id="form-registro" class="formulario">
+                <div class="campo">
+                    <label for="Nombre">Nombre</label>
+                    <input type="nombre" id="nombre" placeholder="Manu Camejo" required>
+                </div>
+                
+                <div class="campo">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="******" required>
+                </div>
+                
+                <div class="campo">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="ejemplo@correo.com" required>
+                </div>
+
+                <div class="campo">
+                    <label for="telefono">Telefono</label>
+                    <input type="telefono" id="telefono" placeholder="+54 123 4567890" required>
+                </div>
+
+                <div class="campo">
+                    <label for="direccion">Dirección</label>
+                    <input type="direccion" id="direccion" placeholder="Paseo Colon 2501" required>
+                </div>
+
+                <button type="submit" class="btn-ingresar">Registrarse</button>
+            </form>
+
+            <div class="pie-login">
+                <a href="../index.html" class="link-volver">Volver al inicio</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/registro.js"></script>
+</body>
+</html>
