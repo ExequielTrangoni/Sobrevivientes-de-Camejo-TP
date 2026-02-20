@@ -30,5 +30,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(puerto, '0.0.0.0', () => {
-    console.log(`Servidor corriendo en el puerto ${puerto}`);
+  console.log(`Servidor corriendo en el puerto ${puerto}`);
 });

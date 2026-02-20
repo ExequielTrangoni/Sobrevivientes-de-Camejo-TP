@@ -4,8 +4,12 @@ const multer = require('multer');
 const uploadsPath = path.join(__dirname, '../../uploads');
 
 if (!fs.existsSync(uploadsPath)) {
-    fs.mkdirSync(uploadsPath, { recursive: true });
-    console.log('Carpeta uploads creada en:', uploadsPath);
+    try {
+        fs.mkdirSync(uploadsPath, { recursive: true });
+        console.log('Carpeta uploads creada exitosamente en:', uploadsPath);
+    } catch (err) {
+        console.error('Error creando la carpeta uploads:', err);
+    }
 }
 
 const storage = multer.diskStorage({
