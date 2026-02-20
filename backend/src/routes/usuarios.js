@@ -2,22 +2,10 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
 const path = require('path');
 const autenticar = require('../middlewares/autor');
-
-const uploadDir = path.join(__dirname, '../../uploads');
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir)
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-});
-
-const upload = multer({ storage: storage });
+const autenticar = require('../middlewares/autor');
+const upload = require('../middlewares/upload');
 
 router.get('/', async (req, res) => {
   try {
