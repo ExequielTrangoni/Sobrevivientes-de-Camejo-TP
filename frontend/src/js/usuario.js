@@ -1,9 +1,9 @@
-const API_USUARIO = "http://localhost:3000/api/usuarios";
-const API_MASCOTAS = "http://localhost:3000/api/mascotas";
-const API_PUBLICACIONES = "http://localhost:3000/api/publicaciones";
-const BACKEND = "http://localhost:3000";
-const API_URL = "http://localhost:3000/api";
-const RUTA_FOTOS = "http://localhost:3000/uploads/";
+const API_USUARIO = "https://sobrevivientes-de-camejo-tp.onrender.com";
+const API_MASCOTAS = "https://sobrevivientes-de-camejo-tp.onrender.com";
+const API_PUBLICACIONES = "https://sobrevivientes-de-camejo-tp.onrender.com";
+const BACKEND = "https://sobrevivientes-de-camejo-tp.onrender.com";
+const API_URL = "https://sobrevivientes-de-camejo-tp.onrender.com/api";
+const RUTA_FOTOS = "https://sobrevivientes-de-camejo-tp.onrender.com/uploads/";
 
 
 let usuario = {};

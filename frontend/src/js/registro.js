@@ -1,4 +1,4 @@
-const API_REGISTRO = 'http://localhost:3000/api/usuarios/registro';
+const API_REGISTRO = 'https://sobrevivientes-de-camejo-tp.onrender.com/api/usuarios/registro';
 const formRegistro = document.getElementById('form-registro'); 
 
 formRegistro.addEventListener('submit', async (e) => {
@@ -29,7 +29,7 @@ formRegistro.addEventListener('submit', async (e) => {
             localStorage.setItem('usuario', JSON.stringify(data.usuario));
             localStorage.setItem('usuarioId', data.usuario.id);
             alert(`¡Bienvenido de nuevo, ${data.usuario.nombre}!`);
-            window.location.href = './index.html';
+            window.location.href = '../index.html';
         
         } else {
             const errorData = await respuesta.json();

@@ -1,4 +1,4 @@
-const API_LOGIN = 'http://localhost:3000/api/usuarios/login';
+const API_LOGIN = 'https://sobrevivientes-de-camejo-tp.onrender.com/api/usuarios/login';
 const formLogin = document.getElementById('form-login');
 
 formLogin.addEventListener('submit', async (e) => {
@@ -23,7 +23,7 @@ formLogin.addEventListener('submit', async (e) => {
             localStorage.setItem('usuarioId', data.usuario.id);
 
             alert(`¡Bienvenido de nuevo, ${data.usuario.nombre}!`);
-            window.location.href = './index.html';
+            window.location.href = '../index.html';
         } else {
             const errorData = await respuesta.json();
             alert(errorData.error || 'Email o contraseña incorrectos');
