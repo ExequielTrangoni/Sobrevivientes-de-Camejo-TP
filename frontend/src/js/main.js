@@ -1,4 +1,4 @@
-const URL_API = 'http://localhost:3000/api/publicaciones';
+const URL_API = 'https://sobrevivientes-de-camejo-tp.onrender.com/api/publicaciones';
 const galeria = document.querySelector(".galeria");
 const modal = document.getElementById("modal");
 const quitarModal = document.getElementById("cerrar-modal-comentarios");
@@ -38,7 +38,7 @@ function cargarMasPublicaciones() {
         const div = document.createElement("div");
         div.className = "publicacion";
 
-        const imagenSrc = `http://localhost:3000/uploads/${pub.imagen_publicacion}`
+        const imagenSrc = `https://sobrevivientes-de-camejo-tp.onrender.com/uploads/${pub.imagen_publicacion}`
 
         div.innerHTML = `
             <div class="publicacion-header">
@@ -96,7 +96,7 @@ if (btnAbrirCrear) {
         if (modalCrear) modalCrear.style.display = 'flex';
 
         try {
-            const res = await fetch(`http://localhost:3000/api/mascotas/usuario/${usuarioLogueado}`);
+            const res = await fetch(`https://sobrevivientes-de-camejo-tp.onrender.com/api/mascotas/usuario/${usuarioLogueado}`);
             
             if (!res.ok) throw new Error("Error al traer mascotas");
             
@@ -151,7 +151,7 @@ if (formPublicacion) {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/api/publicaciones', {
+            const res = await fetch('https://sobrevivientes-de-camejo-tp.onrender.com/api/publicaciones', {
                 method: 'POST',
                 body: formData 
             });

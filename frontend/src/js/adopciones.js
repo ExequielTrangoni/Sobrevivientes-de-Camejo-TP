@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const API_PUBLICACIONES = "http://localhost:3000/api/publicaciones_adopciones";
-  const API_ADOPCIONES = "http://localhost:3000/api/adopciones";
+  const API_PUBLICACIONES = "https://sobrevivientes-de-camejo-tp.onrender.com/api/publicaciones_adopciones";
+  const API_ADOPCIONES = "https://sobrevivientes-de-camejo-tp.onrender.com/api/adopciones";
   const contenedor = document.getElementById("contenedorPublicaciones");
 
   const ventana = document.getElementById("ventanaMascotas");
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!token) return null;
     
     try {
-      const resultado = await fetch("http://localhost:3000/api/usuarios/me", {
+      const resultado = await fetch("https://sobrevivientes-de-camejo-tp.onrender.com/api/usuarios/me", {
         headers: { "Authorization": `Bearer ${token}` }
       });
 
@@ -134,7 +134,7 @@ async function crearSolicitud(idPublicacion, mensaje) {
 
   async function mostrarPublicaciones(publicaciones, solicitudesMapa = {}) {
     contenedor.innerHTML = "";
-    const URL_IMAGENES = "http://localhost:3000/uploads/";
+    const URL_IMAGENES = "https://sobrevivientes-de-camejo-tp.onrender.com/uploads/";
 
     for (const pub of publicaciones) {
 
@@ -288,14 +288,14 @@ async function crearSolicitud(idPublicacion, mensaje) {
       const userId = e.target.dataset.id;
       const publicacionId = e.target.dataset.publicacionId;
 
-      const resUser = await fetch(`http://localhost:3000/api/usuarios/${userId}`);
+      const resUser = await fetch(`https://sobrevivientes-de-camejo-tp.onrender.com/api/usuarios/${userId}`);
       const usuario = await resUser.json();
 
       const pub = publicaciones.find(p => p.publicacion_adopciones_id == publicacionId);
       const especie = (pub.especie || 'otro').toLowerCase();
       const img = especie === 'perro' ? '../images/imagen-perro.jpg' : especie === 'gato' ? '../images/imagen-gato.jpg' : '../images/publicacion-ejemplo.jpg';
 
-      const URL_IMAGENES = "http://localhost:3000/uploads/";
+      const URL_IMAGENES = "https://sobrevivientes-de-camejo-tp.onrender.com/uploads/";
       let imgSrcModal = img;
       if (pub.imagen_mascota && pub.imagen_mascota !== "null") {
           imgSrcModal = URL_IMAGENES + pub.imagen_mascota;
@@ -332,7 +332,7 @@ btnCrear?.addEventListener("click", async () => {
   modalCrear.style.display = "flex";
 
   try {
-    const res = await fetch("http://localhost:3000/api/mascotas/mis-mascotas", {
+    const res = await fetch("https://sobrevivientes-de-camejo-tp.onrender.com/api/mascotas/mis-mascotas", {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -372,7 +372,7 @@ formCrear?.addEventListener("submit", async (e) => {
     }
     const formData = new FormData(formCrear);
     try {
-      const res = await fetch("http://localhost:3000/api/publicaciones_adopciones", {
+      const res = await fetch("https://sobrevivientes-de-camejo-tp.onrender.com/api/publicaciones_adopciones", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`

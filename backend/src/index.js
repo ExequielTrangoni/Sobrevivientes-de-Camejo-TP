@@ -5,7 +5,7 @@ const path = require('path');
 
 
 const app = express();
-const puerto = 3000;
+const puerto = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -29,6 +29,6 @@ app.get("/", (req, res) => {
   res.send("Backend anda");
 });
 
-app.listen(3000, () => {
-  console.log("Servidor en puerto 3000");
+app.listen(puerto, '0.0.0.0', () => {
+    console.log(`Servidor corriendo en el puerto ${puerto}`);
 });
